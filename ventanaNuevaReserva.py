@@ -17,16 +17,16 @@ class Ui_MainWindow(object):
         MainWindow.resize(869, 455)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.textFecInicial = QtWidgets.QTextEdit(self.centralwidget)
+        self.textFecInicial = QtWidgets.QLineEdit(self.centralwidget)
         self.textFecInicial.setGeometry(QtCore.QRect(249, 32, 116, 22))
         self.textFecInicial.setObjectName("textFecInicial")
-        self.textFecFinal = QtWidgets.QTextEdit(self.centralwidget)
+        self.textFecFinal = QtWidgets.QLineEdit(self.centralwidget)
         self.textFecFinal.setGeometry(QtCore.QRect(629, 32, 116, 22))
         self.textFecFinal.setObjectName("textFecFinal")
-        self.textLitros = QtWidgets.QTextEdit(self.centralwidget)
+        self.textLitros = QtWidgets.QLineEdit(self.centralwidget)
         self.textLitros.setGeometry(QtCore.QRect(629, 78, 116, 22))
         self.textLitros.setObjectName("textLitros")
-        self.textCodReserva = QtWidgets.QTextEdit(self.centralwidget)
+        self.textCodReserva = QtWidgets.QLineEdit(self.centralwidget)
         self.textCodReserva.setGeometry(QtCore.QRect(249, 78, 116, 22))
         self.textCodReserva.setObjectName("textCodReserva")
         self.labelFechaInicial = QtWidgets.QLabel(self.centralwidget)
@@ -47,12 +47,12 @@ class Ui_MainWindow(object):
         self.comboBox_Clientes = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox_Clientes.setGeometry(QtCore.QRect(50, 180, 196, 20))
         self.comboBox_Clientes.setObjectName("comboBox_Clientes")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(130, 340, 93, 28))
-        self.pushButton.setObjectName("pushButton")
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(610, 340, 93, 28))
-        self.pushButton_2.setObjectName("pushButton_2")
+        self.okButton = QtWidgets.QPushButton(self.centralwidget)
+        self.okButton.setGeometry(QtCore.QRect(130, 340, 93, 28))
+        self.okButton.setObjectName("pushButton")
+        self.cancelButton = QtWidgets.QPushButton(self.centralwidget)
+        self.cancelButton.setGeometry(QtCore.QRect(610, 340, 93, 28))
+        self.cancelButton.setObjectName("pushButton_2")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 869, 26))
@@ -65,6 +65,14 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    def capturarDatos(self, MainWindow):
+        fechaInicial = self.textFecInicial.text()
+        fechaFinal = self.textFecFinal.text()
+        litros = self.textLitros.text()
+        codigoReserva = self.textCodReserva.text()
+
+
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -72,9 +80,10 @@ class Ui_MainWindow(object):
         self.labelFechaFinal.setText(_translate("MainWindow", "Fecha Final (DD/MM/AAAA):"))
         self.labelLitros.setText(_translate("MainWindow", "Litros Consumidos:"))
         self.labelCodigoReserva.setText(_translate("MainWindow", "Código Reserva:"))
-        self.pushButton.setText(_translate("MainWindow", "OK"))
-        self.pushButton_2.setText(_translate("MainWindow", "Cancel"))
+        self.okButton.setText(_translate("MainWindow", "OK"))
+        self.cancelButton.setText(_translate("MainWindow", "Cancel"))
 
+        self.okButton.clicked.connect(self.capturarDatos)
 
 if __name__ == "__main__":
     import sys
