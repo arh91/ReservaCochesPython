@@ -9,10 +9,12 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import ventanaNuevaReserva
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        #nuevaReserva = QtGui.ventanaNuevaReserva(self)
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(450, 300)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -20,6 +22,7 @@ class Ui_MainWindow(object):
         self.btnNuevaReserva = QtWidgets.QPushButton(self.centralwidget)
         self.btnNuevaReserva.setGeometry(QtCore.QRect(40, 30, 110, 40))
         self.btnNuevaReserva.setObjectName("btnNuevaReserva")
+        self.btnNuevaReserva.clicked.connect(self.mostrarNuevaReserva)
         self.btnListadoReservas = QtWidgets.QPushButton(self.centralwidget)
         self.btnListadoReservas.setGeometry(QtCore.QRect(250, 30, 110, 40))
         self.btnListadoReservas.setObjectName("btnListadoReservas")
@@ -38,6 +41,10 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    def mostrarNuevaReserva(self):
+        self.nuevaReserva = ventanaNuevaReserva()
+        self.nuevaReserva.show()
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -45,6 +52,11 @@ class Ui_MainWindow(object):
         self.btnListadoReservas.setText(_translate("MainWindow", "Listado Reservas"))
         self.btnClienteMes.setText(_translate("MainWindow", "Cliente Mes"))
         self.btnSalir.setText(_translate("MainWindow", "Salir"))
+
+        #nuevaReserva = QtGui.ventanaNuevaReserva(self)
+
+        #self.btnNuevaReserva.clicked.connect(self.mostrarNuevaReserva(nuevaReserva))
+
 
 
 if __name__ == "__main__":
