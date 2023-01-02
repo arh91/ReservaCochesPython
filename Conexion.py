@@ -6,6 +6,7 @@ conexion = mysql.connector.connect(
     host='localhost',
     database='UD02BDReservaCoches',
     port='3306')
+
 print(conexion)
 
 
