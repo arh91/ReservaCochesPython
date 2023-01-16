@@ -66,7 +66,7 @@ class NuevaReserva(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self.okButton.clicked.connect(self.insertarRegistroDB)
+        self.okButton.clicked.connect(self.insertarRegistroBD)
         #Añadimos función al botón cancel
         self.cancelButton.clicked.connect(self.mostrarInicio)
 
@@ -85,25 +85,6 @@ class NuevaReserva(object):
         print(user[1])
         self.conexion.close()
 
-
-    def insertarRegistroDB(self):
-        conexion = mysql.connector.connect(
-            host='localhost',
-            port=3306,
-            user='root',
-            password='castelao',
-            db='UD02BDReservaCoches')
-        cur = conexion.cursor()
-        sql = "INSERT INTO reservas (reCodigo, reFecInicio, reFecFinal) VALUES (%s, %s, %s)"
-        val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
-        cur.execute(sql, val)
-
-        conexion.commit()
-        print(cur.rowcount, "registro insertado")
-
-        conexion.close()
-
-
     def mostrarInicio(self):
         from ventanaInicio import Inicio
         self.ventanaInicio = QtWidgets.QMainWindow()
@@ -121,6 +102,25 @@ class NuevaReserva(object):
         self.fechaFinalDate = datetime.strptime(self.fechaFinal, '%dd/%mm/%Y')
         self.litrosInt = int(self.litros)
         self.codigoReservaInt = int(self.codigoReserva)
+
+
+    def insertarRegistroBD(self):
+        conexion = mysql.connector.connect(
+            host='localhost',
+            port=3306,
+            user='root',
+            password='castelao',
+            db='UD02BDReservaCoches')
+        cur = conexion.cursor()
+        sql = "INSERT INTO reservas (reCodigo, reFecInicio, reFecFinal) VALUES (%s, %s, %s)"
+        val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
+        cur.execute(sql, val)
+
+        conexion.commit()
+        print(cur.rowcount, "registro insertado")
+
+        conexion.close()
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
