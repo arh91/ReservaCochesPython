@@ -94,7 +94,7 @@ class Clientes(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self.btnNuevo.clicked.connect(self.insertarClienteBD)
+        self.btnNuevo.clicked.connect(self.limpiarCampos, self.insertarClienteBD)
         self.btnBuscar.clicked.connect(self.buscarClienteBD)
 
 
@@ -112,63 +112,81 @@ class Clientes(object):
         self.direccion = self.calle+(",")+self.numero+(",")+self.municipio
         self.telefonoInt = int(self.telefono)
 
-        def insertarClienteBD(self):
-            conexion = mysql.connector.connect(
-                host='localhost',
-                port=3306,
-                user='root',
-                password='castelao',
-                db='UD02BDReservaCoches')
-            cur = conexion.cursor()
-            sql = "INSERT INTO clientes (clNif, clNombre, clDireccion, clTelefono) VALUES ('{}', '{}', '{}', '{)'".format(
-                self.nif, self.nombreCompleto, self.direccion, self.telefonoInt)
+    def limpiarCampos(self):
+        self.lineEditNif.clear()
+        self.lineEditNombre.clear()
+        self.lineEditPrimerApellido.clear()
+        self.lineEditSegundoApellido.clear()
+        self.lineEditCalle.clear()
+        self.lineEditNumero.clear()
+        self.lineEditMunicipio.clear()
+        self.lineEditTelefono.clear()
+
+
+    def insertarClienteBD(self):
+        conexion = mysql.connector.connect(
+            host='localhost',
+            port=3306,
+            user='root',
+            password='castelao',
+            db='UD02BDReservaCoches')
+        cur = conexion.cursor()
+        sql = "INSERT INTO clientes (clNif, clNombre, clDireccion, clTelefono) VALUES ('{}', '{}', '{}', '{)'".format(
+            self.nif, self.nombreCompleto, self.direccion, self.telefonoInt)
             # val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
-            cur.execute(sql)
+        cur.execute(sql)
 
-            conexion.commit()
-            print(cur.rowcount, "registro insertado")
+        conexion.commit()
+        print(cur.rowcount, "registro insertado")
 
-            conexion.close()
-
-
-        def buscarClienteBD(self, id):
-            conexion = mysql.connector.connect(
-                host='localhost',
-                port=3306,
-                user='root',
-                password='castelao',
-                db='UD02BDReservaCoches')
-            cur = conexion.cursor()
-            sql="select * from clientes where clNif = %s"
-            nif= self.lineEditNif.text()
-            cur.execute(sql, nif)
-            result = cur.fetchall()
-            for x in result:
-                nombre = x[1]
-                direccion = x[2]
-                telefono = x[3]
-
-            separador = ','
-            nombreCompleto = nombre.split(separador)
-            direccionCompleta = direccion.split(separador)
-
-            self.lineEditNombre.setText(nombreCompleto[0])
-            self.lineEditPrimerApellido.setText(nombreCompleto[1])
-            self.lineEditSegundoApellido.setText(nombreCompleto[2])
-            self.lineEditCalle.setText(direccionCompleta[0])
-            self.lineEditNumero.setText(direccionCompleta[1])
-            self.lineEditMunicipio.setText(direccionCompleta[2])
-            self.lineEditTelefono.setText(telefono)
-
-            self.lineEditNombre.setEnabled(False)
-            self.lineEditPrimerApellido.setEnabled(False)
-            self.lineEditSegundoApellido.setEnabled(False)
-            self.lineEditCalle.setEnabled(False)
-            self.lineEditNumero.setEnabled(False)
-            self.lineEditMunicipio.setEnabled(False)
-            self.lineEditTelefono.setEnabled(False)
+        conexion.close()
 
 
+    def buscarClienteBD(self, id):
+        conexion = mysql.connector.connect(
+            host='localhost',
+            port=3306,
+            user='root',
+            password='castelao',
+            db='UD02BDReservaCoches')
+        cur = conexion.cursor()
+        sql="select * from clientes where clNif = %s"
+        nif= self.lineEditNif.text()
+        cur.execute(sql, nif)
+        result = cur.fetchall()
+        for x in result:
+            nombre = x[1]
+            direccion = x[2]
+            telefono = x[3]
+
+        separador = ','
+        nombreCompleto = nombre.split(separador)
+        direccionCompleta = direccion.split(separador)
+
+        self.lineEditNombre.setText(nombreCompleto[0])
+        self.lineEditPrimerApellido.setText(nombreCompleto[1])
+        self.lineEditSegundoApellido.setText(nombreCompleto[2])
+        self.lineEditCalle.setText(direccionCompleta[0])
+        self.lineEditNumero.setText(direccionCompleta[1])
+        self.lineEditMunicipio.setText(direccionCompleta[2])
+        self.lineEditTelefono.setText(telefono)
+
+        self.lineEditNombre.setEnabled(False)
+        self.lineEditPrimerApellido.setEnabled(False)
+        self.lineEditSegundoApellido.setEnabled(False)
+        self.lineEditCalle.setEnabled(False)
+        self.lineEditNumero.setEnabled(False)
+        self.lineEditMunicipio.setEnabled(False)
+        self.lineEditTelefono.setEnabled(False)
+
+    def modificarCliente(self, id):
+        self.lineEditNombre.setEnabled(True)
+        self.lineEditPrimerApellido.setEnabled(True)
+        self.lineEditSegundoApellido.setEnabled(True)
+        self.lineEditCalle.setEnabled(True)
+        self.lineEditNumero.setEnabled(True)
+        self.lineEditMunicipio.setEnabled(True)
+        self.lineEditTelefono.setEnabled(True)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
