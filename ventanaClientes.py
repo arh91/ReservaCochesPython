@@ -76,6 +76,12 @@ class Clientes(object):
         self.btnEliminar = QtWidgets.QPushButton(self.centralwidget)
         self.btnEliminar.setGeometry(QtCore.QRect(500, 310, 131, 28))
         self.btnEliminar.setObjectName("pushButton_4")
+        self.btnOk = QtWidgets.QPushButton(self.centralwidget)
+        self.btnOk.setGeometry(QtCore.QRect(200, 480, 93, 28))
+        self.btnOk.setObjectName("pushButton_5")
+        self.btnCancel = QtWidgets.QPushButton(self.centralwidget)
+        self.btnCancel.setGeometry(QtCore.QRect(460, 480, 93, 28))
+        self.btnCancel.setObjectName("pushButton_6")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
@@ -154,6 +160,15 @@ class Clientes(object):
             self.lineEditMunicipio.setText(direccionCompleta[2])
             self.lineEditTelefono.setText(telefono)
 
+            self.lineEditNombre.setEnabled(False)
+            self.lineEditPrimerApellido.setEnabled(False)
+            self.lineEditSegundoApellido.setEnabled(False)
+            self.lineEditCalle.setEnabled(False)
+            self.lineEditNumero.setEnabled(False)
+            self.lineEditMunicipio.setEnabled(False)
+            self.lineEditTelefono.setEnabled(False)
+
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -170,6 +185,8 @@ class Clientes(object):
         self.btnBuscar.setText(_translate("MainWindow", "Buscar Cliente"))
         self.btnModificar.setText(_translate("MainWindow", "Modificar Cliente"))
         self.btnEliminar.setText(_translate("MainWindow", "Eliminar Cliente"))
+        self.btnOk.setText(_translate("MainWindow", "OK"))
+        self.btnCancel.setText(_translate("MainWindow", "Cancel"))
 
 
 if __name__ == "__main__":

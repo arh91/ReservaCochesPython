@@ -84,6 +84,7 @@ class ListadoReservas(object):
         self.textDiasMedia.setText("5")
         self.textPrecioMedio.setText("200")
 
+
     def borrarDatos(self):
         self.textNumAlquileres.clear()
         self.textTotalMes.clear()
