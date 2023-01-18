@@ -66,24 +66,25 @@ class NuevaReserva(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self.okButton.clicked.connect(self.insertarRegistroBD)
+        self.okButton.clicked.connect(self.consultaBDNombre)
         #Añadimos función al botón cancel
         self.cancelButton.clicked.connect(self.mostrarInicio)
 
 
     def consultaBDNombre(self):
-        self.conexion = mysql.connector.connect(
+        conexion = mysql.connector.connect(
             host='localhost',
             port=3306,
             user='root',
             password='castelao',
             db='UD02BDReservaCoches')
 
-        self.cur=self.conexion.cursor()
-        self.cur.execute("SELECT clNombre FROM clientes WHERE clNif=12131414P")
-        user=self.cur.fetchone()
-        print(user[1])
-        self.conexion.close()
+        cur=conexion.cursor()
+        cur.execute("SELECT * FROM clientes WHERE clNif=12131414P")
+        result = cur.fetchall()
+        for x in result:
+            print(x)
+        conexion.close()
 
     def mostrarInicio(self):
         from ventanaInicio import Inicio
@@ -112,9 +113,9 @@ class NuevaReserva(object):
             password='castelao',
             db='UD02BDReservaCoches')
         cur = conexion.cursor()
-        sql = "INSERT INTO reservas (reCodigo, reFecInicio, reFecFinal) VALUES (%s, %s, %s)"
-        val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
-        cur.execute(sql, val)
+        sql = "INSERT INTO reservas (reCodigo, reFecInicio, reFecFinal) VALUES ('{}', '{}', '{}')".format(self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
+        #val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
+        cur.execute(sql)
 
         conexion.commit()
         print(cur.rowcount, "registro insertado")
