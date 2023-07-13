@@ -94,10 +94,27 @@ class Clientes(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self.btnNuevo.clicked.connect(self.limpiarCampos, self.insertarClienteBD)
+        self.btnNuevo.clicked.connect(self.ejecutarFuncionesNuevo)
         self.btnBuscar.clicked.connect(self.buscarClienteBD)
+        self.btnCancel.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
 
 
+    def ejecutarFuncionesNuevo(self):
+        self.capturarDatos()
+        self.insertarClienteBD()
+        self.limpiarCampos()
+
+    def ejecutarFunciones(self, MainWindow):
+        self.mostrarInicio()
+        MainWindow.close()
+
+    def mostrarInicio(self):
+        from ventanaInicio import Inicio
+        self.ventanaInicio = QtWidgets.QMainWindow()
+        self.inicio = Inicio()
+        self.inicio.setupUi(self.ventanaInicio)
+        self.ventanaInicio.show()
+        
     def capturarDatos(self):
         self.nif = self.lineEditNif.text()
         self.nombre = self.lineEditNombre.text()

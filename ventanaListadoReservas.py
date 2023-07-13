@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class ListadoReservas(object):
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Listado Reservas")
         MainWindow.resize(884, 450)
@@ -35,9 +36,9 @@ class ListadoReservas(object):
         self.btnCancel = QtWidgets.QPushButton(self.centralwidget)
         self.btnCancel.setGeometry(QtCore.QRect(600, 350, 93, 28))
         self.btnCancel.setObjectName("btnCancel")
-        self.comboBox = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(20, 30, 106, 20))
-        self.comboBox.setObjectName("comboBox")
+        self.comboBoxMesesAnho = QtWidgets.QComboBox(self.centralwidget)
+        self.comboBoxMesesAnho.setGeometry(QtCore.QRect(20, 30, 106, 20))
+        self.comboBoxMesesAnho.setObjectName("comboBox")
         self.labelNumAlquileres = QtWidgets.QLabel(self.centralwidget)
         self.labelNumAlquileres.setGeometry(QtCore.QRect(174, 0, 111, 20))
         self.labelNumAlquileres.setObjectName("labelNumAlquileres")
@@ -50,9 +51,26 @@ class ListadoReservas(object):
         self.labelTotalMes = QtWidgets.QLabel(self.centralwidget)
         self.labelTotalMes.setGeometry(QtCore.QRect(700, 0, 55, 16))
         self.labelTotalMes.setObjectName("labelTotalMes")
-        self.tableView = QtWidgets.QTableView(self.centralwidget)
-        self.tableView.setGeometry(QtCore.QRect(120, 90, 651, 221))
+        self.tableView = QtWidgets.QTableWidget(self.centralwidget)
+        self.tableView.setGeometry(QtCore.QRect(120, 90, 650, 221))
         self.tableView.setObjectName("tableView")
+
+        for i in range(5):
+            self.tableView.setColumnWidth(i, 150)
+
+         #labels = ["Nombre Cliente", "Matrícula vehículo", "Precio", "Días", "Precio Total"]
+
+         #for i in range(len(labels)):
+             #self.tableView.setHorizontalHeaderLabels(labels[i])
+
+        self.tableView.setHorizontalHeaderLabels(["Nombre Cliente", "Matrícula vehículo", "Precio", "Días", "Precio Total"])
+        # self.tableView.setHorizontalHeader("Matrícula Vehículo")
+        # self.tableView.setHorizontalHeader(["Precio"])
+        # self.tableView.setHorizontalHeader(["Días"])
+        # self.tableView.setHorizontalHeader(["Precio Total"])
+
+
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 884, 26))
@@ -65,12 +83,23 @@ class ListadoReservas(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        #Rellenamos comboBox con los meses del año
+        meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+                 "Noviembre", "Diciembre"]
+
+        for m in meses:
+            self.comboBoxMesesAnho.addItem(m)
+
         #Añadimos funciones a botones ok y cancel
         self.btnOk.clicked.connect(self.mostrarDatos)
         self.btnCancel.clicked.connect(self.borrarDatos)
         self.btnCancel.clicked.connect(self.mostrarInicio)
 
 
+    def ejecutarFunciones(self, MainWindow):
+        self.mostrarInicio()
+        MainWindow.close()
+        
     def mostrarInicio(self):
         from ventanaInicio import Inicio
         self.ventanaInicio = QtWidgets.QMainWindow()

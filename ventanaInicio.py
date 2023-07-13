@@ -15,6 +15,7 @@ from ventanaListadoReservas import ListadoReservas
 from ventanaClientes import Clientes
 
 class Inicio(object):
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Principal")
         MainWindow.resize(450, 300)
@@ -42,10 +43,10 @@ class Inicio(object):
         MainWindow.setMenuBar(self.menubar)
 
         #Asignamos funciones a los botones
-        self.btnNuevaReserva.clicked.connect(self.mostrarNuevaReserva)
-        self.btnListadoReservas.clicked.connect(self.mostrarListadoReservas)
-        self.btnListadoClientes.clicked.connect(self.mostrarListadoClientes)
-        self.btnClientes.clicked.connect(self.mostrarClientes)
+        self.btnNuevaReserva.clicked.connect(lambda: self.mostrarNuevaReserva(MainWindow))
+        self.btnListadoReservas.clicked.connect(lambda: self.mostrarListadoReservas(MainWindow))
+        self.btnListadoClientes.clicked.connect(lambda: self.mostrarListadoClientes(MainWindow))
+        self.btnClientes.clicked.connect(lambda: self.mostrarClientes(MainWindow))
         self.btnSalir.clicked.connect(self.salir)
 
 
@@ -53,25 +54,29 @@ class Inicio(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 
-    def mostrarNuevaReserva(self):
+    def mostrarNuevaReserva(self, MainWindow):
+        MainWindow.close()
         self.ventanaNuevaReserva = QtWidgets.QMainWindow()
         self.nuevaReserva = NuevaReserva()
         self.nuevaReserva.setupUi(self.ventanaNuevaReserva)
         self.ventanaNuevaReserva.show()
 
-    def mostrarListadoReservas(self):
+    def mostrarListadoReservas(self, MainWindow):
+        MainWindow.close()
         self.ventanaListadoReservas = QtWidgets.QMainWindow()
         self.listadoReservas = ListadoReservas()
         self.listadoReservas.setupUi(self.ventanaListadoReservas)
         self.ventanaListadoReservas.show()
 
-    def mostrarListadoClientes(self):
+    def mostrarListadoClientes(self, MainWindow):
+        MainWindow.close()
         self.ventanaListadoClientes = QtWidgets.QMainWindow()
         self.listadoClientes = ListadoClientes()
         self.listadoClientes.setupUi(self.ventanaListadoClientes)
         self.ventanaListadoClientes.show()
 
-    def mostrarClientes(self):
+    def mostrarClientes(self, MainWindow):
+        MainWindow.close()
         self.ventanaClientes = QtWidgets.QMainWindow()
         self.clientes = Clientes()
         self.clientes.setupUi(self.ventanaClientes)
