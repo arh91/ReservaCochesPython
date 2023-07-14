@@ -33,9 +33,9 @@ class ListadoReservas(object):
         self.btnOk = QtWidgets.QPushButton(self.centralwidget)
         self.btnOk.setGeometry(QtCore.QRect(170, 350, 93, 28))
         self.btnOk.setObjectName("btnOk")
-        self.btnCancel = QtWidgets.QPushButton(self.centralwidget)
-        self.btnCancel.setGeometry(QtCore.QRect(600, 350, 93, 28))
-        self.btnCancel.setObjectName("btnCancel")
+        self.btnAtras = QtWidgets.QPushButton(self.centralwidget)
+        self.btnAtras.setGeometry(QtCore.QRect(600, 350, 93, 28))
+        self.btnAtras.setObjectName("btnAtras")
         self.comboBoxMesesAnho = QtWidgets.QComboBox(self.centralwidget)
         self.comboBoxMesesAnho.setGeometry(QtCore.QRect(20, 30, 106, 20))
         self.comboBoxMesesAnho.setObjectName("comboBox")
@@ -92,8 +92,7 @@ class ListadoReservas(object):
 
         #Añadimos funciones a botones ok y cancel
         self.btnOk.clicked.connect(self.mostrarDatos)
-        self.btnCancel.clicked.connect(self.borrarDatos)
-        self.btnCancel.clicked.connect(self.mostrarInicio)
+        self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
 
 
     def ejecutarFunciones(self, MainWindow):
@@ -123,9 +122,9 @@ class ListadoReservas(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Listado Reservas"))
         self.btnOk.setText(_translate("MainWindow", "OK"))
-        self.btnCancel.setText(_translate("MainWindow", "Cancel"))
+        self.btnAtras.setText(_translate("MainWindow", "Atrás"))
         self.labelNumAlquileres.setText(_translate("MainWindow", "Numero Alquileres"))
         self.labelPrecioMedio.setText(_translate("MainWindow", "Precio Medio"))
         self.labelDiasMedia.setText(_translate("MainWindow", "Media días"))

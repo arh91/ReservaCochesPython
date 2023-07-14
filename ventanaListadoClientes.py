@@ -12,47 +12,65 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class ListadoClientes(object):
-    def setupUi(self, Clientes):
-        Clientes.setObjectName("Clientes")
-        Clientes.resize(800, 600)
-        self.centralwidget = QtWidgets.QWidget(Clientes)
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(800, 600)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.comboBoxCiudades = QtWidgets.QComboBox(self.centralwidget)
         self.comboBoxCiudades.setGeometry(QtCore.QRect(70, 30, 161, 22))
         self.comboBoxCiudades.setObjectName("comboBoxCiudades")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(320, 480, 161, 28))
-        self.pushButton.setObjectName("pushButton")
-        self.tableView = QtWidgets.QTableView(self.centralwidget)
-        self.tableView.setGeometry(QtCore.QRect(100, 110, 641, 301))
-        self.tableView.setObjectName("tableView")
+        self.btnMostrarDatos = QtWidgets.QPushButton(self.centralwidget)
+        self.btnMostrarDatos.setGeometry(QtCore.QRect(320, 480, 161, 28))
+        self.btnMostrarDatos.setObjectName("btnMostrarDatos")
+        self.btnAtras = QtWidgets.QPushButton(self.centralwidget)
+        self.btnAtras.setGeometry(QtCore.QRect(631,480, 93, 28))
+        self.btnAtras.setObjectName("btnAtras")
+        self.tablaClientes = QtWidgets.QTableView(self.centralwidget)
+        self.tablaClientes.setGeometry(QtCore.QRect(100, 110, 641, 301))
+        self.tablaClientes.setObjectName("tablaClientes")
         self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox.setGeometry(QtCore.QRect(600, 30, 141, 20))
         self.checkBox.setObjectName("checkBox")
-        Clientes.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(Clientes)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
         self.menubar.setObjectName("menubar")
-        Clientes.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(Clientes)
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
-        Clientes.setStatusBar(self.statusbar)
+        MainWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(Clientes)
-        QtCore.QMetaObject.connectSlotsByName(Clientes)
+        self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
 
-    def retranslateUi(self, Clientes):
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
+    def ejecutarFunciones(self, MainWindow):
+        self.mostrarInicio()
+        MainWindow.close()
+
+    def mostrarInicio(self):
+        from ventanaInicio import Inicio
+        self.ventanaInicio = QtWidgets.QMainWindow()
+        self.inicio = Inicio()
+        self.inicio.setupUi(self.ventanaInicio)
+        self.ventanaInicio.show()
+
+    def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        Clientes.setWindowTitle(_translate("Clientes", "MainWindow"))
-        self.pushButton.setText(_translate("Clientes", "Mostrar Clientes"))
-        self.checkBox.setText(_translate("Clientes", "Por orden alfabético"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Listado Clientes"))
+        self.btnMostrarDatos.setText(_translate("MainWindow", "Mostrar MainWindow"))
+        self.btnAtras.setText(_translate("MainWindow", "Atrás"))
+        self.checkBox.setText(_translate("MainWindow", "Por orden alfabético"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    Clientes = QtWidgets.QMainWindow()
+    MainWindow = QtWidgets.QMainWindow()
     ui = ListadoClientes()
-    ui.setupUi(Clientes)
-    Clientes.show()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
     sys.exit(app.exec_())

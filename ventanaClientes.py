@@ -66,22 +66,22 @@ class Clientes(object):
         self.lineEditTelefono.setObjectName("lineEdit_8")
         self.btnNuevo = QtWidgets.QPushButton(self.centralwidget)
         self.btnNuevo.setGeometry(QtCore.QRect(500, 80, 93, 28))
-        self.btnNuevo.setObjectName("pushButton")
+        self.btnNuevo.setObjectName("btnNuevo")
         self.btnBuscar = QtWidgets.QPushButton(self.centralwidget)
         self.btnBuscar.setGeometry(QtCore.QRect(500, 160, 93, 28))
-        self.btnBuscar.setObjectName("pushButton_2")
+        self.btnBuscar.setObjectName("btnBuscar")
         self.btnModificar = QtWidgets.QPushButton(self.centralwidget)
         self.btnModificar.setGeometry(QtCore.QRect(500, 240, 131, 28))
-        self.btnModificar.setObjectName("pushButton_3")
+        self.btnModificar.setObjectName("btnModificar")
         self.btnEliminar = QtWidgets.QPushButton(self.centralwidget)
         self.btnEliminar.setGeometry(QtCore.QRect(500, 310, 131, 28))
-        self.btnEliminar.setObjectName("pushButton_4")
+        self.btnEliminar.setObjectName("btnEliminar")
         self.btnOk = QtWidgets.QPushButton(self.centralwidget)
         self.btnOk.setGeometry(QtCore.QRect(200, 480, 93, 28))
-        self.btnOk.setObjectName("pushButton_5")
-        self.btnCancel = QtWidgets.QPushButton(self.centralwidget)
-        self.btnCancel.setGeometry(QtCore.QRect(460, 480, 93, 28))
-        self.btnCancel.setObjectName("pushButton_6")
+        self.btnOk.setObjectName("btnOk")
+        self.btnAtras = QtWidgets.QPushButton(self.centralwidget)
+        self.btnAtras.setGeometry(QtCore.QRect(460, 480, 93, 28))
+        self.btnAtras.setObjectName("btnAtras")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
@@ -96,7 +96,7 @@ class Clientes(object):
 
         self.btnNuevo.clicked.connect(self.ejecutarFuncionesNuevo)
         self.btnBuscar.clicked.connect(self.buscarClienteBD)
-        self.btnCancel.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
+        self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
 
 
     def ejecutarFuncionesNuevo(self):
@@ -221,7 +221,7 @@ class Clientes(object):
         self.btnModificar.setText(_translate("MainWindow", "Modificar Cliente"))
         self.btnEliminar.setText(_translate("MainWindow", "Eliminar Cliente"))
         self.btnOk.setText(_translate("MainWindow", "OK"))
-        self.btnCancel.setText(_translate("MainWindow", "Cancel"))
+        self.btnAtras.setText(_translate("MainWindow", "Atrás"))
 
 
 if __name__ == "__main__":

@@ -51,10 +51,10 @@ class NuevaReserva(object):
         self.comboBox_Clientes.setObjectName("comboBox_Clientes")
         self.okButton = QtWidgets.QPushButton(self.centralwidget)
         self.okButton.setGeometry(QtCore.QRect(130, 340, 93, 28))
-        self.okButton.setObjectName("pushButton")
-        self.cancelButton = QtWidgets.QPushButton(self.centralwidget)
-        self.cancelButton.setGeometry(QtCore.QRect(610, 340, 93, 28))
-        self.cancelButton.setObjectName("pushButton_2")
+        self.okButton.setObjectName("okButton")
+        self.atrasButton = QtWidgets.QPushButton(self.centralwidget)
+        self.atrasButton.setGeometry(QtCore.QRect(610, 340, 93, 28))
+        self.atrasButton.setObjectName("atrasButton")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 869, 26))
@@ -69,7 +69,7 @@ class NuevaReserva(object):
 
         self.okButton.clicked.connect(self.consultaBDNombre)
         #Añadimos función al botón cancel
-        self.cancelButton.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
+        self.atrasButton.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
 
 
 
@@ -131,13 +131,13 @@ class NuevaReserva(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Nueva Reserva"))
         self.labelFechaInicial.setText(_translate("MainWindow", "Fecha Inicial (DD/MM/AAAA):"))
         self.labelFechaFinal.setText(_translate("MainWindow", "Fecha Final (DD/MM/AAAA):"))
         self.labelLitros.setText(_translate("MainWindow", "Litros Consumidos:"))
         self.labelCodigoReserva.setText(_translate("MainWindow", "Código Reserva:"))
         self.okButton.setText(_translate("MainWindow", "OK"))
-        self.cancelButton.setText(_translate("MainWindow", "Cancel"))
+        self.atrasButton.setText(_translate("MainWindow", "Atrás"))
 
         self.okButton.clicked.connect(self.capturarDatos)
 
