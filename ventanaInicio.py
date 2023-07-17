@@ -89,6 +89,7 @@ class Inicio(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Principal"))
+        
         self.btnNuevaReserva.setText(_translate("MainWindow", "Nueva Reserva"))
         self.btnListadoReservas.setText(_translate("MainWindow", "Listado Reservas"))
         self.btnListadoClientes.setText(_translate("MainWindow", "Listado Clientes"))

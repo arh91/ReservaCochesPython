@@ -44,10 +44,10 @@ class NuevaReserva(object):
         self.labelCodigoReserva.setGeometry(QtCore.QRect(45, 81, 167, 16))
         self.labelCodigoReserva.setObjectName("labelCodigoReserva")
         self.comboBox_Coches = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox_Coches.setGeometry(QtCore.QRect(320, 180, 421, 20))
+        self.comboBox_Coches.setGeometry(QtCore.QRect(50, 230, 421, 20))
         self.comboBox_Coches.setObjectName("comboBox_Coches")
         self.comboBox_Clientes = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox_Clientes.setGeometry(QtCore.QRect(50, 180, 196, 20))
+        self.comboBox_Clientes.setGeometry(QtCore.QRect(50, 180, 421, 20))
         self.comboBox_Clientes.setObjectName("comboBox_Clientes")
         self.okButton = QtWidgets.QPushButton(self.centralwidget)
         self.okButton.setGeometry(QtCore.QRect(130, 340, 93, 28))
@@ -70,6 +70,9 @@ class NuevaReserva(object):
         self.okButton.clicked.connect(self.consultaBDNombre)
         #Añadimos función al botón cancel
         self.atrasButton.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
+
+        self.llenarComboClientes(self.comboBox_Clientes)
+        self.llenarComboCoches(self.comboBox_Coches)
 
 
 
@@ -119,15 +122,92 @@ class NuevaReserva(object):
             password='castelao',
             db='UD02BDReservaCoches')
         cur = conexion.cursor()
-        sql = "INSERT INTO reservas (reCodigo, reFecInicio, reFecFinal) VALUES ('{}', '{}', '{}')".format(self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
+        qwery = "INSERT INTO reservas (reCodigo, reFecInicio, reFecFinal) VALUES ('{}', '{}', '{}')".format(self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
         #val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
-        cur.execute(sql)
+        cur.execute(qwery)
 
         conexion.commit()
         print(cur.rowcount, "registro insertado")
 
+        cur.close()
         conexion.close()
 
+
+    def llenarComboClientes(self, combo):
+        conexion = mysql.connector.connect(
+            host='localhost',
+            port=3306,
+            user='root',
+            password='castelao',
+            db='UD02BDReservaCoches')
+        cur = conexion.cursor()
+        qwery = "SELECT * FROM Clientes"
+        cur.execute(qwery)
+        resultados = cur.fetchall()
+
+        for resultado in resultados:
+            fila = " - ".join([str(valor) for valor in resultado])
+            combo.addItem(fila)
+
+        cur.close()
+        conexion.close()
+
+    def llenarComboCoches(self, combo):
+        conexion = mysql.connector.connect(
+            host='localhost',
+            port=3306,
+            user='root',
+            password='castelao',
+            db='UD02BDReservaCoches')
+        cur = conexion.cursor()
+        qwery = "SELECT * FROM Coches"
+        cur.execute(qwery)
+        resultados = cur.fetchall()
+
+        for resultado in resultados:
+            fila = " - ".join([str(valor) for valor in resultado])
+            combo.addItem(fila)
+
+        cur.close()
+        conexion.close()
+
+
+    """ def llenarComboCoches(self, combo):
+        conexion = mysql.connector.connect(
+            host='localhost',
+            port=3306,
+            user='root',
+            password='castelao',
+            db='UD02BDReservaCoches')
+        cur = conexion.cursor()
+        qwery = "SELECT * FROM Coches"
+        cur.execute(qwery)
+        resultados = cur.fetchall()
+
+        for resultado in resultados:
+            contador=0
+            fragmento=""
+            
+            for valor in resultado:
+                if contador==4:
+                    nuevoFragmento = " - "+str(valor) + " lit"
+                    fila = str(fragmento).join(nuevoFragmento)
+                    contador+=1
+                    continue
+                if contador==6:
+                    nuevoFragmento = " - "+str(valor) + " €"
+                    fila = str(fragmento).join(nuevoFragmento)
+                    contador+=1
+                    continue
+                nuevoFragmento = " - "+str(valor)
+                fila = str(fragmento).join(nuevoFragmento)
+                contador+=1
+                
+            combo.addItem(fila)
+            
+
+        cur.close()
+        conexion.close() """
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
