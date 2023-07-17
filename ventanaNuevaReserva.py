@@ -76,23 +76,29 @@ class NuevaReserva(object):
 
 
 
-    def ejecutarFunciones(self, MainWindow):
-        self.mostrarInicio()
-        MainWindow.close()
-
-    def consultaBDNombre(self):
+    def establecerConexionBD(self):
         conexion = mysql.connector.connect(
             host='localhost',
             port=3306,
             user='root',
             password='castelao',
             db='UD02BDReservaCoches')
+        
+        return conexion
 
+
+    def ejecutarFunciones(self, MainWindow):
+        self.mostrarInicio()
+        MainWindow.close()
+
+    def consultaBDNombre(self):
+        conexion = self.establecerConexionBD()
         cur=conexion.cursor()
         cur.execute("SELECT * FROM clientes WHERE clNif=12131414P")
         result = cur.fetchall()
         for x in result:
             print(x)
+        cur.close()
         conexion.close()
 
     def mostrarInicio(self):
@@ -115,12 +121,7 @@ class NuevaReserva(object):
 
 
     def insertarRegistroBD(self):
-        conexion = mysql.connector.connect(
-            host='localhost',
-            port=3306,
-            user='root',
-            password='castelao',
-            db='UD02BDReservaCoches')
+        conexion = self.establecerConexionBD()
         cur = conexion.cursor()
         qwery = "INSERT INTO reservas (reCodigo, reFecInicio, reFecFinal) VALUES ('{}', '{}', '{}')".format(self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
         #val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
@@ -134,12 +135,7 @@ class NuevaReserva(object):
 
 
     def llenarComboClientes(self, combo):
-        conexion = mysql.connector.connect(
-            host='localhost',
-            port=3306,
-            user='root',
-            password='castelao',
-            db='UD02BDReservaCoches')
+        conexion = self.establecerConexionBD()
         cur = conexion.cursor()
         qwery = "SELECT * FROM Clientes"
         cur.execute(qwery)
@@ -153,16 +149,11 @@ class NuevaReserva(object):
         conexion.close()
 
     def llenarComboCoches(self, combo):
-        conexion = mysql.connector.connect(
-            host='localhost',
-            port=3306,
-            user='root',
-            password='castelao',
-            db='UD02BDReservaCoches')
+        conexion = self.establecerConexionBD()
         cur = conexion.cursor()
         qwery = "SELECT * FROM Coches"
         cur.execute(qwery)
-        resultados = cur.fetchall()
+        resultados = cur.fetchall() 
 
         for resultado in resultados:
             fila = " - ".join([str(valor) for valor in resultado])

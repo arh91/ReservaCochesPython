@@ -99,6 +99,17 @@ class Clientes(object):
         self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
 
 
+    def establecerConexionBD(self):
+        conexion = mysql.connector.connect(
+            host='localhost',
+            port=3306,
+            user='root',
+            password='castelao',
+            db='UD02BDReservaCoches')
+        
+        return conexion
+    
+
     def ejecutarFuncionesNuevo(self):
         self.capturarDatos()
         self.insertarClienteBD()
@@ -141,12 +152,7 @@ class Clientes(object):
 
 
     def insertarClienteBD(self):
-        conexion = mysql.connector.connect(
-            host='localhost',
-            port=3306,
-            user='root',
-            password='castelao',
-            db='UD02BDReservaCoches')
+        conexion = self.establecerConexionBD()
         cur = conexion.cursor()
         sql = "INSERT INTO clientes (clNif, clNombre, clDireccion, clTelefono) VALUES ('{}', '{}', '{}', '{)'".format(
             self.nif, self.nombreCompleto, self.direccion, self.telefonoInt)
@@ -160,12 +166,7 @@ class Clientes(object):
 
 
     def buscarClienteBD(self, id):
-        conexion = mysql.connector.connect(
-            host='localhost',
-            port=3306,
-            user='root',
-            password='castelao',
-            db='UD02BDReservaCoches')
+        conexion = self.establecerConexionBD()
         cur = conexion.cursor()
         sql="select * from clientes where clNif = %s"
         nif= self.lineEditNif.text()
