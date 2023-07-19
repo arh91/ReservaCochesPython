@@ -14,11 +14,6 @@ import mysql.connector
 
 class NuevaReserva(object):
 
-    #codigoReservaInt = 0
-    #fechaInicialSql = 2023-7-21
-    #fechaFinalSql = 2023-7-22
-    fechaInicioModificada = ""
-    fechaFinalModificada = ""
     datosRellenados = False
 
     def setupUi(self, MainWindow):
@@ -117,7 +112,6 @@ class NuevaReserva(object):
         self.ventanaInicio.show()
 
     def capturarDatos(self):
-        #self.fechaInicial = '21/07/2023'
         self.fechaInicial = self.textFecInicial.text()
         self.fechaFinal = self.textFecFinal.text()
         self.litros = self.textLitros.text()
@@ -170,21 +164,12 @@ class NuevaReserva(object):
             self.datosRellenados = True
             self.insertarRegistroBD(self.codigoReservaInt, self.fechaInicialSql, self.fechaFinalSql)
 
-        #self.fechaInicialDate = datetime.strptime(self.fechaInicial, '%d/%m/%Y')
-        #self.fechaFinalDate = datetime.strptime(self.fechaFinal, '%d/%m/%Y')
-        #self.litrosInt = int(self.litros)
-        #self.codigoReservaInt = int(self.codigoReserva)
-
 
     def insertarRegistroBD(self, codigoReservaInt, fechaInicialSql, fechaFinalSql):
-        #self.modificarFechaInicio()
-        #self.modificarFechaFin()
-        #self.capturarDatos()
         if(self.datosRellenados==True):
             conexion = self.establecerConexionBD()
             cur = conexion.cursor()
             qwery = "INSERT INTO reservas (reCodigo, reFecInicio, reFecFinal) VALUES ('{}', '{}', '{}')".format(codigoReservaInt, fechaInicialSql, fechaFinalSql)
-            #val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
             cur.execute(qwery)
 
             conexion.commit()
@@ -264,37 +249,6 @@ class NuevaReserva(object):
         cur.close()
         conexion.close() """
 
-
-    def modificarFechaInicio(self):
-        fechaInicioModificada = self.textFecInicial.text()
-        listFechaInicial = fechaInicioModificada.split("/")
-        listFechaInicialModificado = []
-
-        for i in reversed(listFechaInicial):
-            listFechaInicialModificado.append(i)
-
-        anhoInicio = listFechaInicialModificado[0]
-        mesInicio = listFechaInicialModificado[1]
-        diaInicio = listFechaInicialModificado[2]
-        
-        fechaInicioModificada = str(anhoInicio)+"-"+str(mesInicio)+"-"+str(diaInicio)
-
-    
-    def modificarFechaFin(self):
-        fechaFinalModificada = self.textFecFinal.text()
-        listFechaFinal = fechaFinalModificada.split("/")
-        listFechaFinalModificado = []
-
-        for i in reversed(listFechaFinal):
-            listFechaFinalModificado.append(i)
-
-        anhoInicio = listFechaFinalModificado[0]
-        mesInicio = listFechaFinalModificado[1]
-        diaInicio = listFechaFinalModificado[2]
-        
-        fechaFinalModificada = str(anhoInicio)+"-"+str(mesInicio)+"-"+str(diaInicio)
-
-    
     def limpiarCampos(self):
         self.textCodReserva.setText("")
         self.textFecInicial.setText("")
