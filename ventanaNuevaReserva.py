@@ -14,6 +14,13 @@ import mysql.connector
 
 class NuevaReserva(object):
 
+    #codigoReservaInt = 0
+    #fechaInicialSql = 2023-7-21
+    #fechaFinalSql = 2023-7-22
+    fechaInicioModificada = ""
+    fechaFinalModificada = ""
+    datosRellenados = False
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Nueva Reserva")
         MainWindow.resize(869, 455)
@@ -67,9 +74,10 @@ class NuevaReserva(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self.okButton.clicked.connect(self.consultaBDNombre)
+        self.okButton.clicked.connect(lambda: self.capturarDatos())
         #Añadimos función al botón cancel
         self.atrasButton.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
+
 
         self.llenarComboClientes(self.comboBox_Clientes)
         self.llenarComboCoches(self.comboBox_Coches)
@@ -109,29 +117,85 @@ class NuevaReserva(object):
         self.ventanaInicio.show()
 
     def capturarDatos(self):
+        #self.fechaInicial = '21/07/2023'
         self.fechaInicial = self.textFecInicial.text()
         self.fechaFinal = self.textFecFinal.text()
         self.litros = self.textLitros.text()
         self.codigoReserva = self.textCodReserva.text()
 
-        self.fechaInicialDate = datetime.strptime(self.fechaInicial, '%dd/%mm/%Y')
-        self.fechaFinalDate = datetime.strptime(self.fechaFinal, '%dd/%mm/%Y')
-        self.litrosInt = int(self.litros)
-        self.codigoReservaInt = int(self.codigoReserva)
+        contador = 0
+
+        if self.fechaInicial:
+            try:
+                self.fechaInicialDate = datetime.strptime(self.fechaInicial, '%d/%m/%Y')
+                self.fechaInicialSql = self.fechaInicialDate.strftime('%Y/%m/%d')
+                contador+=1
+                # Continuar con el código que sigue después de la conversión
+            except ValueError:
+                print("Error: La fecha inicial no está en el formato correcto (dd/mm/yyyy)")
+        else:
+            print("Error: La fecha inicial está vacía")
+
+        if self.fechaFinal:
+            try:
+                self.fechaFinalDate = datetime.strptime(self.fechaFinal, '%d/%m/%Y')
+                self.fechaFinalSql = self.fechaFinalDate.strftime('%Y/%m/%d')
+                contador+=1
+                # Continuar con el código que sigue después de la conversión
+            except ValueError:
+                print("Error: La fecha final no está en el formato correcto (dd/mm/yyyy)")
+        else:
+            print("Error: La fecha final está vacía")
+
+        if self.litros:
+            try:
+                self.litrosInt = int(self.litros)
+                # Continuar con el código que sigue después de la conversión
+            except ValueError:
+                print("Error: La cadena no contiene un número entero válido")
+        else:
+            print("Error: La cadena está vacía")
+
+        if self.codigoReserva:
+            try:
+                self.codigoReservaInt = int(self.codigoReserva)
+                contador+=1
+                # Continuar con el código que sigue después de la conversión
+            except ValueError:
+                print("Error: La cadena no contiene un número entero válido")
+        else:
+            print("Error: La cadena está vacía")
+
+        if(contador==3):
+            self.datosRellenados = True
+            self.insertarRegistroBD(self.codigoReservaInt, self.fechaInicialSql, self.fechaFinalSql)
+
+        #self.fechaInicialDate = datetime.strptime(self.fechaInicial, '%d/%m/%Y')
+        #self.fechaFinalDate = datetime.strptime(self.fechaFinal, '%d/%m/%Y')
+        #self.litrosInt = int(self.litros)
+        #self.codigoReservaInt = int(self.codigoReserva)
 
 
-    def insertarRegistroBD(self):
-        conexion = self.establecerConexionBD()
-        cur = conexion.cursor()
-        qwery = "INSERT INTO reservas (reCodigo, reFecInicio, reFecFinal) VALUES ('{}', '{}', '{}')".format(self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
-        #val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
-        cur.execute(qwery)
+    def insertarRegistroBD(self, codigoReservaInt, fechaInicialSql, fechaFinalSql):
+        #self.modificarFechaInicio()
+        #self.modificarFechaFin()
+        #self.capturarDatos()
+        if(self.datosRellenados==True):
+            conexion = self.establecerConexionBD()
+            cur = conexion.cursor()
+            qwery = "INSERT INTO reservas (reCodigo, reFecInicio, reFecFinal) VALUES ('{}', '{}', '{}')".format(codigoReservaInt, fechaInicialSql, fechaFinalSql)
+            #val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
+            cur.execute(qwery)
 
-        conexion.commit()
-        print(cur.rowcount, "registro insertado")
+            conexion.commit()
+            print(cur.rowcount, "registro insertado")
 
-        cur.close()
-        conexion.close()
+            cur.close()
+            conexion.close()
+            self.limpiarCampos()
+            self.datosRellenados = False
+        else:
+            return
 
 
     def llenarComboClientes(self, combo):
@@ -206,7 +270,6 @@ class NuevaReserva(object):
         listFechaInicial = fechaInicioModificada.split("/")
         listFechaInicialModificado = []
 
-        j=0
         for i in reversed(listFechaInicial):
             listFechaInicialModificado.append(i)
 
@@ -222,7 +285,6 @@ class NuevaReserva(object):
         listFechaFinal = fechaFinalModificada.split("/")
         listFechaFinalModificado = []
 
-        j=0
         for i in reversed(listFechaFinal):
             listFechaFinalModificado.append(i)
 
@@ -231,6 +293,13 @@ class NuevaReserva(object):
         diaInicio = listFechaFinalModificado[2]
         
         fechaFinalModificada = str(anhoInicio)+"-"+str(mesInicio)+"-"+str(diaInicio)
+
+    
+    def limpiarCampos(self):
+        self.textCodReserva.setText("")
+        self.textFecInicial.setText("")
+        self.textFecFinal.setText("")
+        self.textLitros.setText("")
 
 
     def retranslateUi(self, MainWindow):
