@@ -200,6 +200,39 @@ class NuevaReserva(object):
         cur.close()
         conexion.close() """
 
+
+    def modificarFechaInicio(self):
+        fechaInicioModificada = self.textFecInicial.text()
+        listFechaInicial = fechaInicioModificada.split("/")
+        listFechaInicialModificado = []
+
+        j=0
+        for i in reversed(listFechaInicial):
+            listFechaInicialModificado.append(i)
+
+        anhoInicio = listFechaInicialModificado[0]
+        mesInicio = listFechaInicialModificado[1]
+        diaInicio = listFechaInicialModificado[2]
+        
+        fechaInicioModificada = str(anhoInicio)+"-"+str(mesInicio)+"-"+str(diaInicio)
+
+    
+    def modificarFechaFin(self):
+        fechaFinalModificada = self.textFecFinal.text()
+        listFechaFinal = fechaFinalModificada.split("/")
+        listFechaFinalModificado = []
+
+        j=0
+        for i in reversed(listFechaFinal):
+            listFechaFinalModificado.append(i)
+
+        anhoInicio = listFechaFinalModificado[0]
+        mesInicio = listFechaFinalModificado[1]
+        diaInicio = listFechaFinalModificado[2]
+        
+        fechaFinalModificada = str(anhoInicio)+"-"+str(mesInicio)+"-"+str(diaInicio)
+
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Nueva Reserva"))
