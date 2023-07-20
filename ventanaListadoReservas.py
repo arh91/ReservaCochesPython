@@ -13,6 +13,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class ListadoReservas(object):
 
+    mesesAnho = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Listado Reservas")
         MainWindow.resize(884, 450)
@@ -84,11 +86,7 @@ class ListadoReservas(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         #Rellenamos comboBox con los meses del año
-        meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
-                 "Noviembre", "Diciembre"]
-
-        for m in meses:
-            self.comboBoxMesesAnho.addItem(m)
+        self.rellenarComboMeses()
 
         #Añadimos funciones a botones ok y cancel
         self.btnOk.clicked.connect(self.mostrarDatos)
@@ -105,6 +103,10 @@ class ListadoReservas(object):
         self.inicio = Inicio()
         self.inicio.setupUi(self.ventanaInicio)
         self.ventanaInicio.show()
+
+    def rellenarComboMeses(self):
+        for m in self.mesesAnho:
+            self.comboBoxMesesAnho.addItem(m)
 
     def mostrarDatos(self):
         self.textNumAlquileres.setText("7")

@@ -46,11 +46,13 @@ class NuevaReserva(object):
         self.labelCodigoReserva.setGeometry(QtCore.QRect(45, 81, 167, 16))
         self.labelCodigoReserva.setObjectName("labelCodigoReserva")
         self.comboBox_Coches = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox_Coches.setGeometry(QtCore.QRect(50, 230, 421, 20))
+        self.comboBox_Coches.setGeometry(QtCore.QRect(50, 230, 440, 20))
         self.comboBox_Coches.setObjectName("comboBox_Coches")
+        self.comboBox_Coches.setCurrentIndex(0)
         self.comboBox_Clientes = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox_Clientes.setGeometry(QtCore.QRect(50, 180, 421, 20))
+        self.comboBox_Clientes.setGeometry(QtCore.QRect(50, 180, 440, 20))
         self.comboBox_Clientes.setObjectName("comboBox_Clientes")
+        self.comboBox_Clientes.setCurrentIndex(0)
         self.okButton = QtWidgets.QPushButton(self.centralwidget)
         self.okButton.setGeometry(QtCore.QRect(130, 340, 93, 28))
         self.okButton.setObjectName("okButton")
@@ -111,11 +113,34 @@ class NuevaReserva(object):
         self.inicio.setupUi(self.ventanaInicio)
         self.ventanaInicio.show()
 
+    def capturarValoresCombos(self):
+        self.cliente = self.comboBox_Clientes.currentText()
+        self.coche = self.comboBox_Coches.currentText()
+        self.datosCliente = self.cliente.split("--")
+        self.dniCliente = self.datosCliente[0]
+        self.dniCliente_Sin_Espacios = self.dniCliente.rstrip()
+        self.datosCoche = self.coche.split("--")
+        self.matriculaCoche = self.datosCoche[0]
+        self.matriculaCoche_Sin_Espacios = self.matriculaCoche.rstrip()
+        print(self.cliente)
+        print(self.coche)
+        print(self.dniCliente_Sin_Espacios)
+        print(self.matriculaCoche_Sin_Espacios)
+
     def capturarDatos(self):
         self.fechaInicial = self.textFecInicial.text()
         self.fechaFinal = self.textFecFinal.text()
         self.litros = self.textLitros.text()
         self.codigoReserva = self.textCodReserva.text()
+        
+        self.cliente = self.comboBox_Clientes.currentText()
+        self.coche = self.comboBox_Coches.currentText()
+        self.datosCliente = self.cliente.split("--")
+        self.dniCliente = self.datosCliente[0]
+        self.dniCliente_Sin_Espacios = self.dniCliente.rstrip()
+        self.datosCoche = self.coche.split("--")
+        self.matriculaCoche = self.datosCoche[0]
+        self.matriculaCoche_Sin_Espacios = self.matriculaCoche.rstrip()
 
         contador = 0
 
@@ -144,6 +169,7 @@ class NuevaReserva(object):
         if self.litros:
             try:
                 self.litrosInt = int(self.litros)
+                contador+=1
                 # Continuar con el código que sigue después de la conversión
             except ValueError:
                 print("Error: La cadena no contiene un número entero válido")
@@ -160,17 +186,23 @@ class NuevaReserva(object):
         else:
             print("Error: La cadena está vacía")
 
-        if(contador==3):
+        if(contador==4):
             self.datosRellenados = True
-            self.insertarRegistroBD(self.codigoReservaInt, self.fechaInicialSql, self.fechaFinalSql)
+            self.insertarRegistroBD(self.codigoReservaInt, self.fechaInicialSql, self.fechaFinalSql, self.litrosInt, self.dniCliente_Sin_Espacios, self.matriculaCoche_Sin_Espacios)
+        else:
+            self.msgBox = QtWidgets.QMessageBox(self.centralwidget)
+            self.msgBox.setText("Por favor, rellene todos los campos.")
+            self.msgBox.exec()
 
 
-    def insertarRegistroBD(self, codigoReservaInt, fechaInicialSql, fechaFinalSql):
+    def insertarRegistroBD(self, codigoReservaInt, fechaInicialSql, fechaFinalSql, litrosInt, dniCliente, matriculaCoche):
         if(self.datosRellenados==True):
             conexion = self.establecerConexionBD()
             cur = conexion.cursor()
             qwery = "INSERT INTO reservas (reCodigo, reFecInicio, reFecFinal) VALUES ('{}', '{}', '{}')".format(codigoReservaInt, fechaInicialSql, fechaFinalSql)
+            qwery2 = "INSERT INTO involucra (inMatricula, inCliente, inReserva, inLitros) VALUES ('{}', '{}', '{}', '{}')".format(matriculaCoche, dniCliente, codigoReservaInt, litrosInt)
             cur.execute(qwery)
+            cur.execute(qwery2)
 
             conexion.commit()
             print(cur.rowcount, "registro insertado")
@@ -179,7 +211,7 @@ class NuevaReserva(object):
             conexion.close()
             self.limpiarCampos()
             self.datosRellenados = False
-        else:
+        else: 
             return
 
 
@@ -191,7 +223,7 @@ class NuevaReserva(object):
         resultados = cur.fetchall()
 
         for resultado in resultados:
-            fila = " - ".join([str(valor) for valor in resultado])
+            fila = " -- ".join([str(valor) for valor in resultado])
             combo.addItem(fila)
 
         cur.close()
@@ -205,7 +237,7 @@ class NuevaReserva(object):
         resultados = cur.fetchall() 
 
         for resultado in resultados:
-            fila = " - ".join([str(valor) for valor in resultado])
+            fila = " -- ".join([str(valor) for valor in resultado])
             combo.addItem(fila)
 
         cur.close()
