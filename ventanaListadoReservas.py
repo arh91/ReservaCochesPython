@@ -9,10 +9,14 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtSql import QSqlDatabase, QSqlQueryModel
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
+import mysql.connector
 
 
 class ListadoReservas(object):
 
+    selected_index = 0
     mesesAnho = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
 
     def setupUi(self, MainWindow):
@@ -53,23 +57,22 @@ class ListadoReservas(object):
         self.labelTotalMes = QtWidgets.QLabel(self.centralwidget)
         self.labelTotalMes.setGeometry(QtCore.QRect(700, 0, 55, 16))
         self.labelTotalMes.setObjectName("labelTotalMes")
-        self.tableView = QtWidgets.QTableWidget(self.centralwidget)
+        self.tableView = QtWidgets.QTableView(self.centralwidget)
         self.tableView.setGeometry(QtCore.QRect(120, 90, 650, 221))
         self.tableView.setObjectName("tableView")
 
-        for i in range(5):
-            self.tableView.setColumnWidth(i, 150)
+        modelo = QStandardItemModel(MainWindow)
+        self.tableView.setModel(modelo)
 
-         #labels = ["Nombre Cliente", "Matrícula vehículo", "Precio", "Días", "Precio Total"]
+        nombreColumnas = ["Cliente", "Vehículo", "Precio", "Días", "Total"]  # Nombres de las columnas
+        modelo.setHorizontalHeaderLabels(nombreColumnas)
 
-         #for i in range(len(labels)):
-             #self.tableView.setHorizontalHeaderLabels(labels[i])
+        anchoTabla = self.tableView.viewport().width()
+        numeroColumnas = 5
+        anchoColumna = anchoTabla / numeroColumnas
 
-        self.tableView.setHorizontalHeaderLabels(["Nombre Cliente", "Matrícula vehículo", "Precio", "Días", "Precio Total"])
-        # self.tableView.setHorizontalHeader("Matrícula Vehículo")
-        # self.tableView.setHorizontalHeader(["Precio"])
-        # self.tableView.setHorizontalHeader(["Días"])
-        # self.tableView.setHorizontalHeader(["Precio Total"])
+        for col in range(numeroColumnas):
+            self.tableView.setColumnWidth(col, anchoColumna)
 
 
 
@@ -88,7 +91,12 @@ class ListadoReservas(object):
         #Rellenamos comboBox con los meses del año
         self.rellenarComboMeses()
 
+        global selected_index
+        selected_index = self.comboBoxMesesAnho.currentIndex()
+
         #Añadimos funciones a botones ok y cancel
+        self.comboBoxMesesAnho.currentIndexChanged.connect(lambda: self.load_data())
+        #self.comboBoxMesesAnho.clicked.connect(lambda: self.load_data(self.tableView))
         self.btnOk.clicked.connect(self.mostrarDatos)
         self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
 
@@ -96,7 +104,61 @@ class ListadoReservas(object):
     def ejecutarFunciones(self, MainWindow):
         self.mostrarInicio()
         MainWindow.close()
+
+    def establecerConexionBD(self):
+        conexion = mysql.connector.connect(
+            host='localhost',
+            port=3306,
+            user='root',
+            password='castelao',
+            db='UD02BDReservaCoches')
         
+        return conexion
+    
+
+    def load_data(self):      
+
+        if(selected_index+1<10):
+            month = "0"+str(selected_index+1)
+        else:
+            month = selected_index+1
+        
+        #final_selected_index_int = int(final_selected_index)
+        #month = final_selected_index_int + 1
+        print("MES: "+month)
+        conexion = self.establecerConexionBD()
+        if not conexion:
+            return
+        
+        query = ("select clNombre, inMatricula, coPrecio, DateDiff(reFecFinal, reFecInicio), coPrecio*DateDiff(reFecFinal, reFecInicio)"
+                +" from Involucra join Clientes on inCliente = clNif"
+                +" join Reservas on inReserva = reCodigo"
+                +" join Coches on inMatricula = coMatricula"
+                +" where month(reFecInicio) = "+month)
+        cur=conexion.cursor()
+        cur.execute(query)
+
+        row = 0
+        for data_row in cur.fetchall():
+            for col, value in enumerate(data_row):
+                item = QStandardItem(str(value))
+                self.tableView.model().setItem(row, col, item)
+            row += 1
+
+
+        """ query_model = QSqlQueryModel()
+        query_model.setQuery(cur.lastQuery())
+
+        if query_model.lastError().isValid():
+            print("Error en la consulta:", query_model.lastError().text())
+            return
+        
+        table.setModel(query_model) """
+
+        cur.close()
+        conexion.close()
+        
+
     def mostrarInicio(self):
         from ventanaInicio import Inicio
         self.ventanaInicio = QtWidgets.QMainWindow()

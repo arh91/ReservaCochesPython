@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtSql import QSqlDatabase, QSqlQueryModel
 
 
 class ListadoClientes(object):
@@ -58,6 +59,17 @@ class ListadoClientes(object):
         self.inicio = Inicio()
         self.inicio.setupUi(self.ventanaInicio)
         self.ventanaInicio.show()
+
+    def load_data(selected_item):
+        query = QSqlQueryModel()
+        query.setQuery(f"SELECT * FROM tabla WHERE columna = '{selected_item}'")
+
+        if query.lastError().isValid():
+            print("Error en la consulta:", query.lastError().text())
+            return
+
+        self.tablaClientes.setModel(query)
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
