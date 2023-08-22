@@ -9,15 +9,21 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtSql import QSqlDatabase, QSqlQueryModel
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtCore import Qt
 import mysql.connector
 
+class CenterDelegate(QStyledItemDelegate):
+    def initStyleOption(self, option, index):
+        super().initStyleOption(option, index)
+        option.displayAlignment = Qt.AlignCenter
 
 class ListadoReservas(object):
 
     selected_index = 0
-    mesesAnho = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+    #global mesesAnho = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Listado Reservas")
@@ -36,9 +42,9 @@ class ListadoReservas(object):
         self.textNumAlquileres = QtWidgets.QLineEdit(self.centralwidget)
         self.textNumAlquileres.setGeometry(QtCore.QRect(170, 30, 116, 22))
         self.textNumAlquileres.setObjectName("textNumAlquileres")
-        self.btnOk = QtWidgets.QPushButton(self.centralwidget)
-        self.btnOk.setGeometry(QtCore.QRect(170, 350, 93, 28))
-        self.btnOk.setObjectName("btnOk")
+        self.btnMostrarDatos = QtWidgets.QPushButton(self.centralwidget)
+        self.btnMostrarDatos.setGeometry(QtCore.QRect(170, 350, 93, 28))
+        self.btnMostrarDatos.setObjectName("btnMostrarDatos")
         self.btnAtras = QtWidgets.QPushButton(self.centralwidget)
         self.btnAtras.setGeometry(QtCore.QRect(600, 350, 93, 28))
         self.btnAtras.setObjectName("btnAtras")
@@ -61,20 +67,6 @@ class ListadoReservas(object):
         self.tableView.setGeometry(QtCore.QRect(120, 90, 650, 221))
         self.tableView.setObjectName("tableView")
 
-        modelo = QStandardItemModel(MainWindow)
-        self.tableView.setModel(modelo)
-
-        nombreColumnas = ["Cliente", "Vehículo", "Precio", "Días", "Total"]  # Nombres de las columnas
-        modelo.setHorizontalHeaderLabels(nombreColumnas)
-
-        anchoTabla = self.tableView.viewport().width()
-        numeroColumnas = 5
-        anchoColumna = anchoTabla / numeroColumnas
-
-        for col in range(numeroColumnas):
-            self.tableView.setColumnWidth(col, anchoColumna)
-
-
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -88,16 +80,19 @@ class ListadoReservas(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        mesesAnho = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+
         #Rellenamos comboBox con los meses del año
-        self.rellenarComboMeses()
+        for m in mesesAnho:
+            self.comboBoxMesesAnho.addItem(m)
 
         global selected_index
         selected_index = self.comboBoxMesesAnho.currentIndex()
 
         #Añadimos funciones a botones ok y cancel
-        self.comboBoxMesesAnho.currentIndexChanged.connect(lambda: self.load_data())
-        #self.comboBoxMesesAnho.clicked.connect(lambda: self.load_data(self.tableView))
-        self.btnOk.clicked.connect(self.mostrarDatos)
+        self.comboBoxMesesAnho.currentIndexChanged.connect(lambda index: self.Cargar_Datos_Tabla(index))
+        #self.comboBoxMesesAnho.clicked.connect(lambda: self.Cargar_Datos_Tabla(self.tableView))
+        self.btnMostrarDatos.clicked.connect(self.mostrarDatos)
         self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
 
 
@@ -116,12 +111,31 @@ class ListadoReservas(object):
         return conexion
     
 
-    def load_data(self):      
+    def Cargar_Datos_Tabla(self, index):    
+        modelo = QStandardItemModel(MainWindow)
+        self.tableView.setModel(modelo)
 
-        if(selected_index+1<10):
-            month = "0"+str(selected_index+1)
+        # Establecer el delegate para centrar todos los datos en la tabla
+        delegate = CenterDelegate()
+        self.tableView.setItemDelegate(delegate)
+
+
+        nombreColumnas = ["Cliente", "Vehículo", "Precio", "Días", "Total"]  # Nombres de las columnas
+        modelo.setHorizontalHeaderLabels(nombreColumnas)
+
+        anchoTabla = self.tableView.viewport().width()
+        numeroColumnas = 5
+        anchoColumna = anchoTabla / numeroColumnas
+
+        for col in range(numeroColumnas):
+            self.tableView.setColumnWidth(col, anchoColumna)  
+
+        index+=1
+
+        if(index<10):
+            month = "0"+str(index)
         else:
-            month = selected_index+1
+            month = str(index)
         
         #final_selected_index_int = int(final_selected_index)
         #month = final_selected_index_int + 1
@@ -134,7 +148,7 @@ class ListadoReservas(object):
                 +" from Involucra join Clientes on inCliente = clNif"
                 +" join Reservas on inReserva = reCodigo"
                 +" join Coches on inMatricula = coMatricula"
-                +" where month(reFecInicio) = "+month)
+                +" where month(reFecInicio) = "+ month)
         cur=conexion.cursor()
         cur.execute(query)
 
@@ -144,16 +158,6 @@ class ListadoReservas(object):
                 item = QStandardItem(str(value))
                 self.tableView.model().setItem(row, col, item)
             row += 1
-
-
-        """ query_model = QSqlQueryModel()
-        query_model.setQuery(cur.lastQuery())
-
-        if query_model.lastError().isValid():
-            print("Error en la consulta:", query_model.lastError().text())
-            return
-        
-        table.setModel(query_model) """
 
         cur.close()
         conexion.close()
@@ -166,9 +170,6 @@ class ListadoReservas(object):
         self.inicio.setupUi(self.ventanaInicio)
         self.ventanaInicio.show()
 
-    def rellenarComboMeses(self):
-        for m in self.mesesAnho:
-            self.comboBoxMesesAnho.addItem(m)
 
     def mostrarDatos(self):
         self.textNumAlquileres.setText("7")
@@ -187,7 +188,7 @@ class ListadoReservas(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Listado Reservas"))
-        self.btnOk.setText(_translate("MainWindow", "OK"))
+        self.btnMostrarDatos.setText(_translate("MainWindow", "Mostrar Datos"))
         self.btnAtras.setText(_translate("MainWindow", "Atrás"))
         self.labelNumAlquileres.setText(_translate("MainWindow", "Numero Alquileres"))
         self.labelPrecioMedio.setText(_translate("MainWindow", "Precio Medio"))
