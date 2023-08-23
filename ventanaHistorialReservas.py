@@ -20,13 +20,13 @@ class CenterDelegate(QStyledItemDelegate):
         super().initStyleOption(option, index)
         option.displayAlignment = Qt.AlignCenter
 
-class ListadoReservas(object):
+
+class HistorialReservas(object):
 
     selected_index = 0
-    #global mesesAnho = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-
+    
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("Reservas en curso")
+        MainWindow.setObjectName("Historial Reservas")
         MainWindow.resize(884, 450)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -46,11 +46,8 @@ class ListadoReservas(object):
         self.btnMostrarDatos.setGeometry(QtCore.QRect(170, 350, 93, 28))
         self.btnMostrarDatos.setObjectName("btnMostrarDatos")
         self.btnAtras = QtWidgets.QPushButton(self.centralwidget)
-        self.btnAtras.setGeometry(QtCore.QRect(350, 350, 93, 28))
+        self.btnAtras.setGeometry(QtCore.QRect(600, 350, 93, 28))
         self.btnAtras.setObjectName("btnAtras")
-        self.btnHistorial = QtWidgets.QPushButton(self.centralwidget)
-        self.btnHistorial.setGeometry(QtCore.QRect(600, 350, 150, 28))
-        self.btnHistorial.setObjectName("btnHistorial")
         self.comboBoxMesesAnho = QtWidgets.QComboBox(self.centralwidget)
         self.comboBoxMesesAnho.setGeometry(QtCore.QRect(20, 30, 106, 20))
         self.comboBoxMesesAnho.setObjectName("comboBox")
@@ -96,15 +93,10 @@ class ListadoReservas(object):
         self.comboBoxMesesAnho.currentIndexChanged.connect(lambda index: self.Cargar_Datos_Tabla(index))
         self.btnMostrarDatos.clicked.connect(self.mostrarDatos)
         self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
-        self.btnHistorial.clicked.connect(lambda: self.ejecutarHistorial(MainWindow))
 
 
     def ejecutarFunciones(self, MainWindow):
-        self.mostrarInicio()
-        MainWindow.close()
-
-    def ejecutarHistorial(self, MainWindow):
-        self.mostrarHistorial()
+        self.mostrarListadoReservas()
         MainWindow.close()
 
     def establecerConexionBD(self):
@@ -170,20 +162,12 @@ class ListadoReservas(object):
         conexion.close()
         
 
-    def mostrarInicio(self):
-        from ventanaInicio import Inicio
-        self.ventanaInicio = QtWidgets.QMainWindow()
-        self.inicio = Inicio()
-        self.inicio.setupUi(self.ventanaInicio)
-        self.ventanaInicio.show()
-
-    
-    def mostrarHistorial(self):
-        from ventanaHistorialReservas import HistorialReservas
-        self.ventanaHistorialReservas = QtWidgets.QMainWindow()
-        self.historial = HistorialReservas()
-        self.historial.setupUi(self.ventanaHistorialReservas)
-        self.ventanaHistorialReservas.show()
+    def mostrarListadoReservas(self):
+        from ventanaListadoReservas import ListadoReservas
+        self.ventanaListadoReservas = QtWidgets.QMainWindow()
+        self.listaReservas = ListadoReservas()
+        self.listaReservas.setupUi(self.ventanaListadoReservas)
+        self.ventanaListadoReservas.show()
 
 
     def mostrarDatos(self):
@@ -202,10 +186,9 @@ class ListadoReservas(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Reservas en curso"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Historial Reservas"))
         self.btnMostrarDatos.setText(_translate("MainWindow", "Mostrar Datos"))
         self.btnAtras.setText(_translate("MainWindow", "Atrás"))
-        self.btnHistorial.setText(_translate("MainWindow", "Historial Reservas"))
         self.labelNumAlquileres.setText(_translate("MainWindow", "Numero Alquileres"))
         self.labelPrecioMedio.setText(_translate("MainWindow", "Precio Medio"))
         self.labelDiasMedia.setText(_translate("MainWindow", "Media días"))
@@ -216,7 +199,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = ListadoReservas()
+    ui = HistorialReservas()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
