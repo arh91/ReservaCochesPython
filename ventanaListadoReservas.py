@@ -170,6 +170,42 @@ class ListadoReservas(object):
         conexion.close()
         
 
+    def moverAHistorial(self):
+        conexion = self.establecerConexionBD()
+
+        consulta = ("INSERT INTO historialReservas "
+        +"SELECT * FROM Reservas "
+        +"WHERE reFecFinal < CURDATE()")
+
+        consulta2 = ("INSERT INTO historialInvolucra "
+        +"SELECT * FROM Involucra "
+        +"WHERE inReserva IN "
+        +"(SELECT reCodigo FROM Reservas "
+        +"WHERE reFecFinal < CURDATE())")
+
+        consulta3 = "DELETE FROM Involucra WHERE inReserva IN(SELECT reCodigo FROM Reservas WHERE reFecFinal < CURDATE())"
+
+        consulta4 = "DELETE FROM Reservas WHERE reFecFinal < CURDATE()"
+
+        cur = conexion.cursor()
+        cur.execute(consulta)
+        cur.execute(consulta2)
+        cur.execute(consulta3)
+        cur.execute(consulta4)
+        cur.close()
+        conexion.close()
+
+    def eliminarReservasAntiguas(self):
+        conexion = self.establecerConexionBD()
+        query1 = "DELETE FROM historialInvolucra WHERE inReserva IN(SELECT reCodigo FROM historialReservas WHERE reFecFinal < DATE_SUB(NOW(), INTERVAL 5 YEAR))"
+        query2 = "DELETE FROM historialReservas WHERE reFecFinal < DATE_SUB(NOW(), INTERVAL 5 YEAR)"
+        cur = conexion.cursor()
+        cur.execute(query1)
+        cur.execute(query2)
+        cur.close()
+        conexion.close()
+
+
     def mostrarInicio(self):
         from ventanaInicio import Inicio
         self.ventanaInicio = QtWidgets.QMainWindow()

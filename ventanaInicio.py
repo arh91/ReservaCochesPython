@@ -49,6 +49,9 @@ class Inicio(object):
         self.btnClientes.clicked.connect(lambda: self.mostrarClientes(MainWindow))
         self.btnSalir.clicked.connect(self.salir)
 
+        listaReservas = ListadoReservas()
+        listaReservas.moverAHistorial()
+        listaReservas.eliminarReservasAntiguas()
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
