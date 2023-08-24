@@ -173,15 +173,15 @@ class ListadoReservas(object):
     def moverAHistorial(self):
         conexion = self.establecerConexionBD()
 
-        consulta = ("INSERT INTO historialReservas "
-        +"SELECT * FROM Reservas "
-        +"WHERE reFecFinal < CURDATE()")
+        """ consulta = ("INSERT INTO historialReservas "
+        +"(SELECT * FROM Reservas "
+        +"WHERE reFecFinal < CURDATE())")
 
         consulta2 = ("INSERT INTO historialInvolucra "
-        +"SELECT * FROM Involucra "
+        +"(SELECT * FROM Involucra "
         +"WHERE inReserva IN "
         +"(SELECT reCodigo FROM Reservas "
-        +"WHERE reFecFinal < CURDATE())")
+        +"WHERE reFecFinal < CURDATE()))")
 
         consulta3 = "DELETE FROM Involucra WHERE inReserva IN(SELECT reCodigo FROM Reservas WHERE reFecFinal < CURDATE())"
 
@@ -191,9 +191,24 @@ class ListadoReservas(object):
         cur.execute(consulta)
         cur.execute(consulta2)
         cur.execute(consulta3)
-        cur.execute(consulta4)
+        cur.execute(consulta4) """
+
+        consultas = [
+            "INSERT INTO historialReservas (SELECT * FROM Reservas WHERE reFecFinal < NOW())",
+            "INSERT INTO historialInvolucra (SELECT * FROM Involucra WHERE inReserva IN (SELECT reCodigo FROM Reservas WHERE reFecFinal < NOW()))",
+            "DELETE FROM Involucra WHERE inReserva IN(SELECT reCodigo FROM Reservas WHERE reFecFinal < NOW())",
+            "DELETE FROM Reservas WHERE reFecFinal < NOW()"
+        ]
+
+        cur = conexion.cursor()
+
+        for consulta in consultas:
+            cur.execute(consulta)
+
         cur.close()
         conexion.close()
+        print("MÉTODO MOVER A HISTORIAL TERMINADO.")
+
 
     def eliminarReservasAntiguas(self):
         conexion = self.establecerConexionBD()

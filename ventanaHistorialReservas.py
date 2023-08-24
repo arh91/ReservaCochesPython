@@ -13,7 +13,15 @@ from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtSql import QSqlDatabase, QSqlQueryModel
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtCore import Qt
+from datetime import datetime
 import mysql.connector
+
+mesesAnho = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+numerosMeses = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+fechaActual = datetime.now().date()
+stringFechaActual = str(fechaActual)
+fecha = stringFechaActual.split("-")
+
 
 class CenterDelegate(QStyledItemDelegate):
     def initStyleOption(self, option, index):
@@ -51,6 +59,9 @@ class HistorialReservas(object):
         self.comboBoxMesesAnho = QtWidgets.QComboBox(self.centralwidget)
         self.comboBoxMesesAnho.setGeometry(QtCore.QRect(20, 30, 106, 20))
         self.comboBoxMesesAnho.setObjectName("comboBox")
+        self.comboBoxAnhos = QtWidgets.QComboBox(self.centralwidget)
+        self.comboBoxAnhos.setGeometry(QtCore.QRect(20, 230, 106, 20))
+        self.comboBoxAnhos.setObjectName("comboBoxAnhos")
         self.labelNumAlquileres = QtWidgets.QLabel(self.centralwidget)
         self.labelNumAlquileres.setGeometry(QtCore.QRect(174, 0, 111, 20))
         self.labelNumAlquileres.setObjectName("labelNumAlquileres")
@@ -64,7 +75,7 @@ class HistorialReservas(object):
         self.labelTotalMes.setGeometry(QtCore.QRect(700, 0, 55, 16))
         self.labelTotalMes.setObjectName("labelTotalMes")
         self.tableView = QtWidgets.QTableView(self.centralwidget)
-        self.tableView.setGeometry(QtCore.QRect(120, 90, 650, 221))
+        self.tableView.setGeometry(QtCore.QRect(170, 90, 650, 221))
         self.tableView.setObjectName("tableView")
 
 
@@ -80,17 +91,15 @@ class HistorialReservas(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        mesesAnho = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-
-        #Rellenamos comboBox con los meses del año
-        for m in mesesAnho:
-            self.comboBoxMesesAnho.addItem(m)
-
+        self.rellenarComboAnhos(self.comboBoxAnhos)
+        self.rellenarComboMesesAnteriores(self.comboBoxMesesAnho)
+        
         global selected_index
-        selected_index = self.comboBoxMesesAnho.currentIndex()
+        selected_index = self.comboBoxMesesAnho.currentIndex() 
 
         #Añadimos funciones a botones ok y cancel
         self.comboBoxMesesAnho.currentIndexChanged.connect(lambda index: self.Cargar_Datos_Tabla(index))
+        self.comboBoxAnhos.currentIndexChanged.connect(lambda index: self.mostrarMeses(index))
         self.btnMostrarDatos.clicked.connect(self.mostrarDatos)
         self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
 
@@ -98,6 +107,16 @@ class HistorialReservas(object):
     def ejecutarFunciones(self, MainWindow):
         self.mostrarListadoReservas()
         MainWindow.close()
+
+
+    def mostrarMeses(self, index):
+        if index==0:
+            self.rellenarComboMesesAnteriores(self.comboBoxMesesAnho)
+        elif index == 5:
+            self.rellenarComboMesesSiquientes(self.comboBoxMesesAnho)
+        else:
+            self.rellenarComboMeses(self.comboBoxMesesAnho)
+
 
     def establecerConexionBD(self):
         conexion = mysql.connector.connect(
@@ -136,9 +155,6 @@ class HistorialReservas(object):
         else:
             month = str(index)
         
-        #final_selected_index_int = int(final_selected_index)
-        #month = final_selected_index_int + 1
-        print("MES: "+month)
         conexion = self.establecerConexionBD()
         if not conexion:
             return
@@ -182,6 +198,63 @@ class HistorialReservas(object):
         self.textTotalMes.clear()
         self.textDiasMedia.clear()
         self.textPrecioMedio.clear()
+
+
+    def rellenarComboMeses(self, combo):
+        combo.clear()
+        for m in mesesAnho:
+            combo.addItem(m)
+
+
+    def rellenarComboMesesAnteriores(self, combo):
+        combo.clear()
+        mesActual = fecha[1]
+        indice = 0
+
+        for n in numerosMeses:
+            if n==mesActual:
+                break
+            indice+=1
+
+        #ultimoMes = mesesAnho[indice]
+        #print(ultimoMes) 
+
+        indiceMes = 0
+        for m in mesesAnho:
+            if indiceMes>indice:
+                break
+            combo.addItem(m)
+            indiceMes+=1
+            
+
+
+    def rellenarComboMesesSiquientes(self, combo):
+        combo.clear()
+        mesActual = fecha[1]
+        indice = 0
+
+        for n in numerosMeses:
+            if n==mesActual:
+                break
+            indice+=1
+
+        indiceMes = 0
+        for m in mesesAnho:
+            if indiceMes<=indice:
+                indiceMes+=1
+                continue
+            combo.addItem(m)
+            indiceMes+=1 
+
+
+    def rellenarComboAnhos(self, combo):
+        combo.clear()
+
+        anho = fecha[0]
+        anhoActual = int(anho)
+        for a in range(6):
+            combo.addItem(str(anhoActual))
+            anhoActual-=1
 
 
     def retranslateUi(self, MainWindow):
