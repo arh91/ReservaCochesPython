@@ -98,7 +98,7 @@ class HistorialReservas(object):
         selected_index = self.comboBoxMesesAnho.currentIndex() 
 
         #Añadimos funciones a botones ok y cancel
-        self.comboBoxMesesAnho.currentIndexChanged.connect(lambda index: self.Cargar_Datos_Tabla(index))
+        self.comboBoxMesesAnho.currentIndexChanged.connect(lambda index: self.Cargar_Datos_Tabla(index, self.comboBoxAnhos))
         self.comboBoxAnhos.currentIndexChanged.connect(lambda index: self.mostrarMeses(index))
         self.btnMostrarDatos.clicked.connect(self.mostrarDatos)
         self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
@@ -129,7 +129,7 @@ class HistorialReservas(object):
         return conexion
     
 
-    def Cargar_Datos_Tabla(self, index):    
+    def Cargar_Datos_Tabla(self, index, comboAnhos):    
         modelo = QStandardItemModel(MainWindow)
         self.tableView.setModel(modelo)
 
@@ -155,15 +155,18 @@ class HistorialReservas(object):
         else:
             month = str(index)
         
+        year = comboAnhos.currentText()
+
         conexion = self.establecerConexionBD()
         if not conexion:
             return
         
         query = ("select clNombre, inMatricula, coPrecio, DateDiff(reFecFinal, reFecInicio), coPrecio*DateDiff(reFecFinal, reFecInicio)"
-                +" from Involucra join Clientes on inCliente = clNif"
-                +" join Reservas on inReserva = reCodigo"
+                +" from historialInvolucra join Clientes on inCliente = clNif"
+                +" join historialReservas on inReserva = reCodigo"
                 +" join Coches on inMatricula = coMatricula"
-                +" where month(reFecInicio) = "+ month)
+                +" where month(reFecInicio) = "+ month
+                +" and year(reFecInicio) = "+ year)
         cur=conexion.cursor()
         cur.execute(query)
 

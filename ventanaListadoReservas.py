@@ -194,10 +194,10 @@ class ListadoReservas(object):
         cur.execute(consulta4) """
 
         consultas = [
-            "INSERT INTO historialReservas (SELECT * FROM Reservas WHERE reFecFinal < NOW())",
-            "INSERT INTO historialInvolucra (SELECT * FROM Involucra WHERE inReserva IN (SELECT reCodigo FROM Reservas WHERE reFecFinal < NOW()))",
-            "DELETE FROM Involucra WHERE inReserva IN(SELECT reCodigo FROM Reservas WHERE reFecFinal < NOW())",
-            "DELETE FROM Reservas WHERE reFecFinal < NOW()"
+            "INSERT INTO historialReservas (SELECT * FROM Reservas WHERE reFecFinal < CURDATE())",
+            "INSERT INTO historialInvolucra (SELECT * FROM Involucra WHERE inReserva IN (SELECT reCodigo FROM Reservas WHERE reFecFinal < CURDATE()))",
+            "DELETE FROM Involucra WHERE inReserva IN(SELECT reCodigo FROM Reservas WHERE reFecFinal < CURDATE())",
+            "DELETE FROM Reservas WHERE reFecFinal < CURDATE()"
         ]
 
         cur = conexion.cursor()
