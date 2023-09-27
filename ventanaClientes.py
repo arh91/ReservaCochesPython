@@ -96,7 +96,7 @@ class Clientes(object):
 
         self.btnNuevo.clicked.connect(self.ejecutarFuncionesNuevo)
         #self.btnBuscar.clicked.connect(self.buscarClienteBD)
-        self.btnMasOpciones.clicked.connect(self.ejecutarMasOpciones)
+        self.btnMasOpciones.clicked.connect(lambda: self.ejecutarMasOpciones(MainWindow))
         self.btnAtras.clicked.connect(lambda: self.ejecutarInicio(MainWindow))
 
 

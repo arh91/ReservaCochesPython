@@ -5,7 +5,7 @@ from PyQt5.QtCore import pyqtSignal
 import mysql.connector
 
 
-class modificarCliente(object):
+class masOpciones(object):
 
     existeDni = "false"
     data_signal = pyqtSignal(str, str, str, str, str, str, str, str)
@@ -92,8 +92,8 @@ class modificarCliente(object):
 
         self.btnBuscar.clicked.connect(self.buscarClienteBD)
         self.btnEliminar.clicked.connect(self.eliminarCliente)
-        self.btnModificar.clicked.connect(self.ejecutarFuncionesModificar)
-        self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
+        self.btnModificar.clicked.connect(lambda: self.ejecutarFuncionesModificar(MainWindow))
+        self.btnAtras.clicked.connect(lambda: self.ejecutarClientes(MainWindow))
 
         
     def establecerConexionBD(self):
@@ -133,7 +133,7 @@ class modificarCliente(object):
         self.lineEditTelefono.clear()
 
 
-    def buscarClienteBD(self, id):
+    def buscarClienteBD(self):
         nif = self.lineEditNif.text()
         if not nif.strip():
             self.lanzarPanelInformativo("Error: no ha introducido el nif del cliente que desea eliminar.")
@@ -145,35 +145,33 @@ class modificarCliente(object):
         conexion = self.establecerConexionBD()
         cur = conexion.cursor()
         sql="select * from clientes where clNif = %s"
-        nif= self.lineEditNif.text()
-        cur.execute(sql, nif)
+        cur.execute(sql, (nif,))
         result = cur.fetchall()
         for x in result:
             nombre = x[1]
             direccion = x[2]
             telefono = x[3]
         cur.close()
-        conexion.close()
+        conexion.close() 
+        
+        separadorNombre = ' '
+        separadorDireccion = ','
+        nombreCompleto = nombre.split(separadorNombre)
+        direccionCompleta = direccion.split(separadorDireccion)
 
-        separador = ','
-        nombreCompleto = nombre.split(separador)
-        direccionCompleta = direccion.split(separador)
-
-        self.lineEditNombre.setText(nombreCompleto[0])
-        self.lineEditPrimerApellido.setText(nombreCompleto[1])
-        self.lineEditSegundoApellido.setText(nombreCompleto[2])
+        if len(nombreCompleto) == 2:
+            self.lineEditNombre.setText(nombreCompleto[0])
+            self.lineEditPrimerApellido.setText(nombreCompleto[1])
+            self.lineEditSegundoApellido.setText("")
+        else:
+            self.lineEditNombre.setText(nombreCompleto[0])
+            self.lineEditPrimerApellido.setText(nombreCompleto[1])
+            self.lineEditSegundoApellido.setText(nombreCompleto[2])
+        
         self.lineEditCalle.setText(direccionCompleta[0])
         self.lineEditNumero.setText(direccionCompleta[1])
         self.lineEditMunicipio.setText(direccionCompleta[2])
-        self.lineEditTelefono.setText(telefono)
-
-        self.lineEditNombre.setEnabled(False)
-        self.lineEditPrimerApellido.setEnabled(False)
-        self.lineEditSegundoApellido.setEnabled(False)
-        self.lineEditCalle.setEnabled(False)
-        self.lineEditNumero.setEnabled(False)
-        self.lineEditMunicipio.setEnabled(False)
-        self.lineEditTelefono.setEnabled(False)
+        self.lineEditTelefono.setText(str(telefono))
 
 
     def eliminarCliente(self):
@@ -199,20 +197,34 @@ class modificarCliente(object):
                 return
 
 
-        def ejecutarFuncionesModificar(self):
-            self.enviarDatos()
-            self.mostrarVentanaModificar()
-            MainWindow.close()
+    def ejecutarClientes(self, MainWindow):
+        self.mostrarVentanaClientes()
+        MainWindow.close()
 
 
-        def mostrarVentanaModificar(self):
-            from ventanaModificarCliente import modificarCliente
-            self.ventanaModificarCliente = QtWidgets.QMainWindow()
-            self.modificarCliente = modificarCliente()
-            self.modificarCliente.setupUi(self.ventanaModificarCliente)
-            self.ventanaModificarCliente.show()
+    def ejecutarFuncionesModificar(self, MainWindow):
+        self.enviarDatos()
+        self.mostrarVentanaModificar()
+        MainWindow.close()
 
-    """ def modificarCliente(self):
+
+    def mostrarVentanaModificar(self):
+        from ventanaModificarCliente import masOpciones
+        self.ventanaModificarCliente = QtWidgets.QMainWindow()
+        self.masOpciones = masOpciones()
+        self.masOpciones.setupUi(self.ventanaModificarCliente)
+        self.ventanaModificarCliente.show()
+
+
+    def mostrarVentanaClientes(self):
+        from ventanaClientes import Clientes
+        self.ventanaClientes = QtWidgets.QMainWindow()
+        self.clientes = Clientes()
+        self.clientes.setupUi(self.ventanaClientes)
+        self.ventanaClientes.show()
+
+
+    """ def masOpciones(self):
         self.lineEditNombre.setEnabled(True)
         self.lineEditPrimerApellido.setEnabled(True)
         self.lineEditSegundoApellido.setEnabled(True)
@@ -285,7 +297,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = modificarCliente()
+    ui = masOpciones()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())

@@ -2,6 +2,7 @@ import mysql
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 from ventanaMasOpciones import masOpciones
+from PyQt5.QtCore import pyqtSlot
 import mysql.connector
 
 
@@ -92,7 +93,7 @@ class modificarCliente(object):
         self.btnBuscar.clicked.connect(self.buscarClienteBD)
         self.btnEliminar.clicked.connect(self.eliminarCliente)
         self.btnModificar.clicked.connect(self.modificarCliente)
-        self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
+        self.btnAtras.clicked.connect(lambda: self.ejecutarMasOpciones(MainWindow))
 
         
     def establecerConexionBD(self):
@@ -142,6 +143,7 @@ class modificarCliente(object):
         self.lineEditTelefono.setEnabled(True)
 
 
+    @pyqtSlot(str, str, str, str, str, str, str, str)
     def recibirDatos(self, nif, nombre, primerApellido, segundoApellido, calle, numero, municipio, telefono):
         self.lineEditNif.setText(nif)
         self.lineEditNombre.setText(nombre)
@@ -175,6 +177,17 @@ class modificarCliente(object):
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Error al consultar la base de datos: {str(e)}")
 
+
+    def mostrarMasOpciones(self):
+        from ventanaMasOpciones import masOpciones
+        self.ventanaMasOpciones = QtWidgets.QMainWindow()
+        self.masOpciones = masOpciones()
+        self.masOpciones.setupUi(self.ventanaMasOpciones)
+        self.ventanaMasOpciones.show()
+
+    def ejecutarMasOpciones(self):
+        self.mostrarMasOpciones()
+        MainWindow.close()
 
     def lanzarPanelInformativo(self, mensaje):
         msgBox = QtWidgets.QMessageBox(self.centralwidget)
