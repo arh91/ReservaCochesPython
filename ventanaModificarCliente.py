@@ -1,14 +1,13 @@
 import mysql
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import pyqtSignal
+from ventanaMasOpciones import masOpciones
 import mysql.connector
 
 
 class modificarCliente(object):
 
     existeDni = "false"
-    data_signal = pyqtSignal(str, str, str, str, str, str, str, str)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -92,7 +91,7 @@ class modificarCliente(object):
 
         self.btnBuscar.clicked.connect(self.buscarClienteBD)
         self.btnEliminar.clicked.connect(self.eliminarCliente)
-        self.btnModificar.clicked.connect(self.ejecutarFuncionesModificar)
+        self.btnModificar.clicked.connect(self.modificarCliente)
         self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
 
         
@@ -133,93 +132,25 @@ class modificarCliente(object):
         self.lineEditTelefono.clear()
 
 
-    def buscarClienteBD(self, id):
-        nif = self.lineEditNif.text()
-        if not nif.strip():
-            self.lanzarPanelInformativo("Error: no ha introducido el nif del cliente que desea eliminar.")
-            return
-        self.verificarEnMySQL()
-        if existeDni == "false":
-            self.lanzarPanelInformativo("Error: el nif introducido no existe en nuestra base de datos.")
-            return
-        conexion = self.establecerConexionBD()
-        cur = conexion.cursor()
-        sql="select * from clientes where clNif = %s"
-        nif= self.lineEditNif.text()
-        cur.execute(sql, nif)
-        result = cur.fetchall()
-        for x in result:
-            nombre = x[1]
-            direccion = x[2]
-            telefono = x[3]
-        cur.close()
-        conexion.close()
-
-        separador = ','
-        nombreCompleto = nombre.split(separador)
-        direccionCompleta = direccion.split(separador)
-
-        self.lineEditNombre.setText(nombreCompleto[0])
-        self.lineEditPrimerApellido.setText(nombreCompleto[1])
-        self.lineEditSegundoApellido.setText(nombreCompleto[2])
-        self.lineEditCalle.setText(direccionCompleta[0])
-        self.lineEditNumero.setText(direccionCompleta[1])
-        self.lineEditMunicipio.setText(direccionCompleta[2])
-        self.lineEditTelefono.setText(telefono)
-
-        self.lineEditNombre.setEnabled(False)
-        self.lineEditPrimerApellido.setEnabled(False)
-        self.lineEditSegundoApellido.setEnabled(False)
-        self.lineEditCalle.setEnabled(False)
-        self.lineEditNumero.setEnabled(False)
-        self.lineEditMunicipio.setEnabled(False)
-        self.lineEditTelefono.setEnabled(False)
-
-
-    def eliminarCliente(self):
-        nif = self.lineEditNif.text()
-        if not nif.strip():
-            self.lanzarPanelInformativo("Error: no ha introducido el nif del cliente que desea eliminar!")
-            return
-        self.verificarEnMySQL()
-        if existeDni == "false":
-            self.lanzarPanelInformativo("Error: el nif introducido no existe en nuestra base de datos.")
-            return
-        else:
-            buttonReply = QMessageBox.question(self, 'Mensaje PyQt5', "¿Está seguro que desea eliminar éste cliente?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-            if buttonReply == QMessageBox.Yes:
-                conexion = self.establecerConexionBD()
-                cur = conexion.cursor()
-                sql="delete * from clientes where clNif = %s"
-                nif= self.lineEditNif.text()
-                cur.execute(sql, nif)
-                cur.close()
-                conexion.close()
-            else:
-                return
-
-
-        def ejecutarFuncionesModificar(self):
-            self.enviarDatos()
-            self.mostrarVentanaModificar()
-            MainWindow.close()
-
-
-        def mostrarVentanaModificar(self):
-            from ventanaModificarCliente import modificarCliente
-            self.ventanaModificarCliente = QtWidgets.QMainWindow()
-            self.modificarCliente = modificarCliente()
-            self.modificarCliente.setupUi(self.ventanaModificarCliente)
-            self.ventanaModificarCliente.show()
-
-    """ def modificarCliente(self):
+    def modificarCliente(self):
         self.lineEditNombre.setEnabled(True)
         self.lineEditPrimerApellido.setEnabled(True)
         self.lineEditSegundoApellido.setEnabled(True)
         self.lineEditCalle.setEnabled(True)
         self.lineEditNumero.setEnabled(True)
         self.lineEditMunicipio.setEnabled(True)
-        self.lineEditTelefono.setEnabled(True) """
+        self.lineEditTelefono.setEnabled(True)
+
+
+    def recibirDatos(self, nif, nombre, primerApellido, segundoApellido, calle, numero, municipio, telefono):
+        self.lineEditNif.setText(nif)
+        self.lineEditNombre.setText(nombre)
+        self.lineEditPrimerApellido.setText(primerApellido)
+        self.lineEditSegundoApellido.setText(segundoApellido)
+        self.lineEditCalle.setText(calle)
+        self.lineEditNumero.setText(numero)
+        self.lineEditMunicipio.setText(municipio)
+        self.lineEditTelefono.setText(telefono)
 
 
     def verificarEnMySQL(self):
@@ -250,17 +181,6 @@ class modificarCliente(object):
         msgBox.setText(mensaje)
         msgBox.exec()
 
-    def enviarDatos(self):
-        nif = self.lineEditNif.text()
-        nombre = self.lineEditNombre.text()
-        primerApellido = self.lineEditPrimerApellido.text()
-        segundoApellido = self.lineEditSegundoApellido.text()
-        calle = self.lineEditCalle.text()
-        numero = self.lineEditNumero.text()
-        municipio = self.lineEditMunicipio.text()
-        telefono = self.lineEditTelefono.text()
-
-        self.data_signal.emit(nif, nombre, primerApellido, segundoApellido, calle, numero, municipio, telefono)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -289,4 +209,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
