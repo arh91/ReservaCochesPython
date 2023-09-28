@@ -7,7 +7,9 @@ import mysql.connector
 
 class masOpciones(object):
 
-    existeDni = "false"
+    existeDni = False
+    botonBuscarClickado = False
+    camposRellenados = False
     data_signal = pyqtSignal(str, str, str, str, str, str, str, str)
 
     def setupUi(self, MainWindow):
@@ -70,8 +72,11 @@ class masOpciones(object):
         self.btnModificar.setGeometry(QtCore.QRect(500, 240, 131, 28))
         self.btnModificar.setObjectName("btnModificar")
         self.btnEliminar = QtWidgets.QPushButton(self.centralwidget)
-        self.btnEliminar.setGeometry(QtCore.QRect(500, 310, 131, 28))
+        self.btnEliminar.setGeometry(QtCore.QRect(500, 320, 131, 28))
         self.btnEliminar.setObjectName("btnEliminar")
+        self.btnLimpiar = QtWidgets.QPushButton(self.centralwidget)
+        self.btnLimpiar.setGeometry(QtCore.QRect(500, 400, 131, 28))
+        self.btnLimpiar.setObjectName("btnLimpiar")
         """ self.btnOk = QtWidgets.QPushButton(self.centralwidget)
         self.btnOk.setGeometry(QtCore.QRect(200, 480, 93, 28))
         self.btnOk.setObjectName("btnOk") """
@@ -94,6 +99,7 @@ class masOpciones(object):
         self.btnEliminar.clicked.connect(self.eliminarCliente)
         self.btnModificar.clicked.connect(lambda: self.ejecutarFuncionesModificar(MainWindow))
         self.btnAtras.clicked.connect(lambda: self.ejecutarClientes(MainWindow))
+        self.btnLimpiar.clicked.connect(self.limpiarCampos)
 
         
     def establecerConexionBD(self):
@@ -123,6 +129,8 @@ class masOpciones(object):
 
 
     def limpiarCampos(self):
+        global botonBuscarClickado
+        botonBuscarClickado = False
         self.lineEditNif.clear()
         self.lineEditNombre.clear()
         self.lineEditPrimerApellido.clear()
@@ -133,13 +141,35 @@ class masOpciones(object):
         self.lineEditTelefono.clear()
 
 
+    def desactivarCampos(self):
+        self.lineEditNif.setEnabled(False)
+        self.lineEditNombre.setEnabled(False)
+        self.lineEditPrimerApellido.setEnabled(False)
+        self.lineEditSegundoApellido.setEnabled(False)
+        self.lineEditCalle.setEnabled(False)
+        self.lineEditNumero.setEnabled(False)
+        self.lineEditMunicipio.setEnabled(False)
+        self.lineEditTelefono.setEnabled(False)
+
+    def activarCampos(self):
+        self.lineEditNif.setEnabled(True)
+        self.lineEditNombre.setEnabled(True)
+        self.lineEditPrimerApellido.setEnabled(True)
+        self.lineEditSegundoApellido.setEnabled(True)
+        self.lineEditCalle.setEnabled(True)
+        self.lineEditNumero.setEnabled(True)
+        self.lineEditMunicipio.setEnabled(True)
+        self.lineEditTelefono.setEnabled(True)
+
     def buscarClienteBD(self):
+        global botonBuscarClickado
+        botonBuscarClickado=False
         nif = self.lineEditNif.text()
         if not nif.strip():
             self.lanzarPanelInformativo("Error: no ha introducido el nif del cliente que desea eliminar.")
             return
         self.verificarEnMySQL()
-        if existeDni == "false":
+        if existeDni == False:
             self.lanzarPanelInformativo("Error: el nif introducido no existe en nuestra base de datos.")
             return
         conexion = self.establecerConexionBD()
@@ -153,7 +183,7 @@ class masOpciones(object):
             telefono = x[3]
         cur.close()
         conexion.close() 
-        
+
         separadorNombre = ' '
         separadorDireccion = ','
         nombreCompleto = nombre.split(separadorNombre)
@@ -172,9 +202,13 @@ class masOpciones(object):
         self.lineEditNumero.setText(direccionCompleta[1])
         self.lineEditMunicipio.setText(direccionCompleta[2])
         self.lineEditTelefono.setText(str(telefono))
+        self.desactivarCampos()
+        botonBuscarClickado=True
 
 
     def eliminarCliente(self):
+        global botonBuscarClickado
+        botonBuscarClickado = False
         nif = self.lineEditNif.text()
         if not nif.strip():
             self.lanzarPanelInformativo("Error: no ha introducido el nif del cliente que desea eliminar!")
@@ -190,7 +224,7 @@ class masOpciones(object):
                 cur = conexion.cursor()
                 sql="delete * from clientes where clNif = %s"
                 nif= self.lineEditNif.text()
-                cur.execute(sql, nif)
+                cur.execute(sql, (nif,))
                 cur.close()
                 conexion.close()
             else:
@@ -198,14 +232,23 @@ class masOpciones(object):
 
 
     def ejecutarClientes(self, MainWindow):
+        global botonBuscarClickado
+        botonBuscarClickado = False
         self.mostrarVentanaClientes()
         MainWindow.close()
 
 
     def ejecutarFuncionesModificar(self, MainWindow):
-        self.enviarDatos()
-        self.mostrarVentanaModificar()
-        MainWindow.close()
+        global botonBuscarClickado
+        global camposRellenados
+        self.comprobarCamposRellenados()
+        if botonBuscarClickado==True and camposRellenados==True:
+            self.enviarDatos()
+            self.mostrarVentanaModificar()
+            MainWindow.close()
+        else:
+            self.lanzarPanelInformativo("Primero busque los datos del cliente que desea modificar, introduciendo su nif y haciendo click en botón Buscar")
+            botonBuscarClickado = False
 
 
     def mostrarVentanaModificar(self):
@@ -246,15 +289,33 @@ class masOpciones(object):
             resultado = cur.fetchone()
 
             if resultado:
-                existeDni = "true"
+                existeDni = True
             else:
-                existeDni = "false"
+                existeDni = False
             
             cur.close()
             conexion.close()
 
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Error al consultar la base de datos: {str(e)}")
+
+
+    def comprobarCamposRellenados(self):
+        global camposRellenados
+        # Comprobar si todos los QLineEdit están rellenados
+        nif = self.lineEditNif.text()
+        nombre = self.lineEditNombre.text()
+        primerApellido = self.lineEditPrimerApellido.text()
+        segundoApellido = self.lineEditSegundoApellido.text()
+        calle = self.lineEditCalle.text()
+        numero = self.lineEditNumero.text()
+        municipio = self.lineEditMunicipio.text()
+        telefono = self.lineEditTelefono.text()
+
+        if nif.strip() and nombre.strip() and primerApellido.strip() and segundoApellido.strip() and calle.strip() and numero.strip() and municipio.strip() and telefono.strip():
+            camposRellenados = True
+        else:
+            camposRellenados = False
 
 
     def lanzarPanelInformativo(self, mensaje):
@@ -274,6 +335,21 @@ class masOpciones(object):
 
         self.data_signal.emit(nif, nombre, primerApellido, segundoApellido, calle, numero, municipio, telefono)
 
+    
+    def limpiarCampos(self):
+        global botonBuscarClickado
+        botonBuscarClickado = False
+        self.lineEditNif.clear()
+        self.lineEditNombre.clear()
+        self.lineEditPrimerApellido.clear()
+        self.lineEditSegundoApellido.clear()
+        self.lineEditCalle.clear()
+        self.lineEditNumero.clear()
+        self.lineEditMunicipio.clear()
+        self.lineEditTelefono.clear()
+        self.activarCampos()
+
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Más Opciones"))
@@ -291,6 +367,7 @@ class masOpciones(object):
         self.btnEliminar.setText(_translate("MainWindow", "Eliminar Cliente"))
         #self.btnMasOpciones.setText(_translate("MainWindow", "Más Opciones"))
         self.btnAtras.setText(_translate("MainWindow", "Atrás"))
+        self.btnLimpiar.setText(_translate("MainWindow", "Limpiar Campos"))
 
 
 if __name__ == "__main__":
