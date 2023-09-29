@@ -103,10 +103,14 @@ class ListadoReservas(object):
         self.mostrarInicio()
         MainWindow.close()
 
+
+    #Abrimos ventana del historial de reservas y cerramos la ventana anterior
     def ejecutarHistorial(self, MainWindow):
         self.mostrarHistorial()
         MainWindow.close()
 
+
+    #Función para conectar con la base de datos
     def establecerConexionBD(self):
         conexion = mysql.connector.connect(
             host='localhost',
@@ -118,6 +122,7 @@ class ListadoReservas(object):
         return conexion
     
 
+    #Construye la tabla con las columnas correspondientes y la rellena de datos obtenidos de la base de datos
     def Cargar_Datos_Tabla(self, index):    
         modelo = QStandardItemModel(MainWindow)
         self.tableView.setModel(modelo)
@@ -170,6 +175,7 @@ class ListadoReservas(object):
         conexion.close()
         
 
+    #Función que mueve al historial de reservas aquellas que vayan finalizando (cuya fecha final de reserva ya haya pasado)
     def moverAHistorial(self):
         conexion = self.establecerConexionBD()
 
@@ -210,6 +216,7 @@ class ListadoReservas(object):
         print("MÉTODO MOVER A HISTORIAL TERMINADO.")
 
 
+    #Se eliminan definitivamente de la base de datos aquellas reservas que cumplan 5 años de antiguedad (contando a partir de la fecha de fin de reserva)
     def eliminarReservasAntiguas(self):
         conexion = self.establecerConexionBD()
         query1 = "DELETE FROM historialInvolucra WHERE inReserva IN(SELECT reCodigo FROM historialReservas WHERE reFecFinal < DATE_SUB(NOW(), INTERVAL 5 YEAR))"
@@ -221,6 +228,7 @@ class ListadoReservas(object):
         conexion.close()
 
 
+    #Muestra la ventana de inicio de la aplicación
     def mostrarInicio(self):
         from ventanaInicio import Inicio
         self.ventanaInicio = QtWidgets.QMainWindow()
@@ -228,7 +236,8 @@ class ListadoReservas(object):
         self.inicio.setupUi(self.ventanaInicio)
         self.ventanaInicio.show()
 
-    
+
+    #Muestra la ventana que lista las reservas pertenecientes al historial
     def mostrarHistorial(self):
         from ventanaHistorialReservas import HistorialReservas
         self.ventanaHistorialReservas = QtWidgets.QMainWindow()
@@ -244,6 +253,7 @@ class ListadoReservas(object):
         self.textPrecioMedio.setText("200")
 
 
+    #Deja vacíos todos los campos de texto de la ventana
     def borrarDatos(self):
         self.textNumAlquileres.clear()
         self.textTotalMes.clear()

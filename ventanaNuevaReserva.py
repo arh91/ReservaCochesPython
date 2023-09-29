@@ -80,7 +80,7 @@ class NuevaReserva(object):
         self.llenarComboCoches(self.comboBox_Coches)
 
 
-
+    #Función para conectar con la base de datos
     def establecerConexionBD(self):
         conexion = mysql.connector.connect(
             host='localhost',
@@ -92,9 +92,11 @@ class NuevaReserva(object):
         return conexion
 
 
+    #Muestra la ventana de inicio de la app y cierra la anterior
     def ejecutarFunciones(self, MainWindow):
         self.mostrarInicio()
         MainWindow.close()
+
 
     def consultaBDNombre(self):
         conexion = self.establecerConexionBD()
@@ -106,6 +108,8 @@ class NuevaReserva(object):
         cur.close()
         conexion.close()
 
+
+    #Muestra la ventana de inicio de nuestra aplicación
     def mostrarInicio(self):
         from ventanaInicio import Inicio
         self.ventanaInicio = QtWidgets.QMainWindow()
@@ -113,20 +117,10 @@ class NuevaReserva(object):
         self.inicio.setupUi(self.ventanaInicio)
         self.ventanaInicio.show()
 
-    def capturarValoresCombos(self):
-        self.cliente = self.comboBox_Clientes.currentText()
-        self.coche = self.comboBox_Coches.currentText()
-        self.datosCliente = self.cliente.split("--")
-        self.dniCliente = self.datosCliente[0]
-        self.dniCliente_Sin_Espacios = self.dniCliente.rstrip()
-        self.datosCoche = self.coche.split("--")
-        self.matriculaCoche = self.datosCoche[0]
-        self.matriculaCoche_Sin_Espacios = self.matriculaCoche.rstrip()
-        print(self.cliente)
-        print(self.coche)
-        print(self.dniCliente_Sin_Espacios)
-        print(self.matriculaCoche_Sin_Espacios)
 
+    #Recoge los datos introducidos por el usuario en los campos de texto y los almacena en variables
+    #También extrae datos del cliente y del vehículo en los items seleccionados por el usuario en los comboBox
+    #Valida que todos los campos hayan sido rellenados y que los datos introducidos sean correctos
     def capturarDatos(self):
         self.fechaInicial = self.textFecInicial.text()
         self.fechaFinal = self.textFecFinal.text()
@@ -148,9 +142,6 @@ class NuevaReserva(object):
             try:
                 self.fechaInicialDatetime = datetime.strptime(self.fechaInicial, '%d/%m/%Y')
                 self.fechaInicialDate = self.fechaInicialDatetime.date()
-                """ if(self.fechaInicialDate<self.fecha_Actual):
-                    self.lanzarPanelInformativo("La fecha inicial de reserva no puede ser anterior a la fecha actual.")
-                    return """
                 self.fechaInicialSql = self.fechaInicialDatetime.strftime('%Y/%m/%d')
                 contador+=1
                 # Continuar con el código que sigue después de la conversión
@@ -204,6 +195,7 @@ class NuevaReserva(object):
             self.lanzarPanelInformativo("Por favor, rellene todos los campos")
 
 
+    #Función que recibe los datos de registro necesarios y los guarda como un nuevo registro en la base de datos
     def insertarRegistroBD(self, codigoReservaInt, fechaInicialSql, fechaFinalSql, litrosInt, dniCliente, matriculaCoche):
         if(self.datosRellenados==True):
             conexion = self.establecerConexionBD()
@@ -214,7 +206,7 @@ class NuevaReserva(object):
             cur.execute(qwery2)
 
             conexion.commit()
-            print(cur.rowcount, "registro insertado")
+            self.lanzarPanelInformativo("Se han registrado los datos correctamente.")
 
             cur.close()
             conexion.close()
@@ -224,6 +216,7 @@ class NuevaReserva(object):
             return
 
 
+    #Función que accede a la base de datos y vuelca todos los clientes de la misma en un comboBox
     def llenarComboClientes(self, combo):
         conexion = self.establecerConexionBD()
         cur = conexion.cursor()
@@ -238,6 +231,8 @@ class NuevaReserva(object):
         cur.close()
         conexion.close()
 
+
+    #Función que accede a la base de datos y vuelca todos los vehículos registrados en un comboBox
     def llenarComboCoches(self, combo):
         conexion = self.establecerConexionBD()
         cur = conexion.cursor()
@@ -253,53 +248,20 @@ class NuevaReserva(object):
         conexion.close()
 
 
-    """ def llenarComboCoches(self, combo):
-        conexion = mysql.connector.connect(
-            host='localhost',
-            port=3306,
-            user='root',
-            password='castelao',
-            db='UD02BDReservaCoches')
-        cur = conexion.cursor()
-        qwery = "SELECT * FROM Coches"
-        cur.execute(qwery)
-        resultados = cur.fetchall()
-
-        for resultado in resultados:
-            contador=0
-            fragmento=""
-            
-            for valor in resultado:
-                if contador==4:
-                    nuevoFragmento = " - "+str(valor) + " lit"
-                    fila = str(fragmento).join(nuevoFragmento)
-                    contador+=1
-                    continue
-                if contador==6:
-                    nuevoFragmento = " - "+str(valor) + " €"
-                    fila = str(fragmento).join(nuevoFragmento)
-                    contador+=1
-                    continue
-                nuevoFragmento = " - "+str(valor)
-                fila = str(fragmento).join(nuevoFragmento)
-                contador+=1
-                
-            combo.addItem(fila)
-            
-
-        cur.close()
-        conexion.close() """
-
+    #Deja vacíos todos los campos de texto de nuestra ventana
     def limpiarCampos(self):
         self.textCodReserva.setText("")
         self.textFecInicial.setText("")
         self.textFecFinal.setText("")
         self.textLitros.setText("")
 
+
+    #Función que lanza un panel para informar u orientar al usuario en lo necesario
     def lanzarPanelInformativo(self, mensaje):
         msgBox = QtWidgets.QMessageBox(self.centralwidget)
         msgBox.setText(mensaje)
         msgBox.exec()
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -312,6 +274,7 @@ class NuevaReserva(object):
         self.atrasButton.setText(_translate("MainWindow", "Atrás"))
 
         self.okButton.clicked.connect(self.capturarDatos)
+
 
 if __name__ == "__main__":
     import sys
