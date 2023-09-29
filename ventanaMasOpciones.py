@@ -1,11 +1,11 @@
 import mysql
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 import mysql.connector
 
 
-class masOpciones(object):
+class masOpciones(QMainWindow):
 
     existeDni = False
     botonBuscarClickado = False
@@ -102,6 +102,7 @@ class masOpciones(object):
         self.btnLimpiar.clicked.connect(self.limpiarCampos)
 
         
+    # Función para conectar con la base de datos
     def establecerConexionBD(self):
         conexion = mysql.connector.connect(
             host='localhost',
@@ -113,6 +114,7 @@ class masOpciones(object):
         return conexion
     
 
+    # Captura los datos introducidos por el usuario en los distintos campos de texto de la interfaz
     def capturarDatos(self):
         self.nif = self.lineEditNif.text()
         self.nombre = self.lineEditNombre.text()
@@ -128,6 +130,7 @@ class masOpciones(object):
         self.telefonoInt = int(self.telefono)
 
 
+    # Deja en blanco todos los campos de texto de la interfaz
     def limpiarCampos(self):
         global botonBuscarClickado
         botonBuscarClickado = False
@@ -141,6 +144,7 @@ class masOpciones(object):
         self.lineEditTelefono.clear()
 
 
+    # Deshabilita la edición de los campos de texto de la interfaz
     def desactivarCampos(self):
         self.lineEditNif.setEnabled(False)
         self.lineEditNombre.setEnabled(False)
@@ -151,6 +155,8 @@ class masOpciones(object):
         self.lineEditMunicipio.setEnabled(False)
         self.lineEditTelefono.setEnabled(False)
 
+
+    # Habilita la edición de los campos de texto de la interfaz
     def activarCampos(self):
         self.lineEditNif.setEnabled(True)
         self.lineEditNombre.setEnabled(True)
@@ -161,6 +167,8 @@ class masOpciones(object):
         self.lineEditMunicipio.setEnabled(True)
         self.lineEditTelefono.setEnabled(True)
 
+
+    # Función que muestra los datos de un cliente a partir del nif introducido por el usuario
     def buscarClienteBD(self):
         global botonBuscarClickado
         botonBuscarClickado=False
@@ -206,6 +214,7 @@ class masOpciones(object):
         botonBuscarClickado=True
 
 
+    # Función que elimina un cliente de la base de datos cuyo dni haya sido introducido por el usuario
     def eliminarCliente(self):
         global botonBuscarClickado
         botonBuscarClickado = False
@@ -231,6 +240,7 @@ class masOpciones(object):
                 return
 
 
+    # Muestra la ventana Clientes y cierra la anterior
     def ejecutarClientes(self, MainWindow):
         global botonBuscarClickado
         botonBuscarClickado = False
@@ -251,14 +261,16 @@ class masOpciones(object):
             botonBuscarClickado = False
 
 
+    # Muestra la ventana para modificar datos de clientes
     def mostrarVentanaModificar(self):
-        from ventanaModificarCliente import masOpciones
+        from ventanaModificarCliente import modificarCliente
         self.ventanaModificarCliente = QtWidgets.QMainWindow()
-        self.masOpciones = masOpciones()
-        self.masOpciones.setupUi(self.ventanaModificarCliente)
+        self.modificarCliente = modificarCliente()
+        self.modificarCliente.setupUi(self.ventanaModificarCliente)
         self.ventanaModificarCliente.show()
 
 
+    # Muestra la ventana Clientes
     def mostrarVentanaClientes(self):
         from ventanaClientes import Clientes
         self.ventanaClientes = QtWidgets.QMainWindow()
@@ -277,6 +289,7 @@ class masOpciones(object):
         self.lineEditTelefono.setEnabled(True) """
 
 
+    # Función que lee el dni introducido por el usuario, luego accede a la base de datos y comprueba que dicho dni exista en la misma
     def verificarEnMySQL(self):
         global existeDni
         nif = self.lineEditNif.text()
@@ -300,6 +313,7 @@ class masOpciones(object):
             QMessageBox.critical(self, "Error", f"Error al consultar la base de datos: {str(e)}")
 
 
+    # Comprueba que todos los campos de texto estén rellenados
     def comprobarCamposRellenados(self):
         global camposRellenados
         # Comprobar si todos los QLineEdit están rellenados
@@ -318,11 +332,13 @@ class masOpciones(object):
             camposRellenados = False
 
 
+    # Función que lanza un panel para informar u orientar al usuario en lo necesario
     def lanzarPanelInformativo(self, mensaje):
         msgBox = QtWidgets.QMessageBox(self.centralwidget)
         msgBox.setText(mensaje)
         msgBox.exec()
 
+    # Envía los datos de la busqueda a la interfaz de modificarCliente
     def enviarDatos(self):
         nif = self.lineEditNif.text()
         nombre = self.lineEditNombre.text()
@@ -336,6 +352,7 @@ class masOpciones(object):
         self.data_signal.emit(nif, nombre, primerApellido, segundoApellido, calle, numero, municipio, telefono)
 
     
+    # Deja en blanco todos los campos de texto de la interfaz
     def limpiarCampos(self):
         global botonBuscarClickado
         botonBuscarClickado = False

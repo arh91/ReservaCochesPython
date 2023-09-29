@@ -1,12 +1,12 @@
 import mysql
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QMessageBox
 from ventanaMasOpciones import masOpciones
 from PyQt5.QtCore import pyqtSlot
 import mysql.connector
 
 
-class modificarCliente(object):
+class modificarCliente(QMainWindow):
 
     existeDni = "false"
 
@@ -63,18 +63,9 @@ class modificarCliente(object):
         self.lineEditTelefono = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEditTelefono.setGeometry(QtCore.QRect(200, 380, 113, 22))
         self.lineEditTelefono.setObjectName("lineEdit_8")
-        self.btnBuscar = QtWidgets.QPushButton(self.centralwidget)
-        self.btnBuscar.setGeometry(QtCore.QRect(500, 160, 93, 28))
-        self.btnBuscar.setObjectName("btnBuscar")
         self.btnModificar = QtWidgets.QPushButton(self.centralwidget)
         self.btnModificar.setGeometry(QtCore.QRect(500, 240, 131, 28))
         self.btnModificar.setObjectName("btnModificar")
-        self.btnEliminar = QtWidgets.QPushButton(self.centralwidget)
-        self.btnEliminar.setGeometry(QtCore.QRect(500, 310, 131, 28))
-        self.btnEliminar.setObjectName("btnEliminar")
-        """ self.btnOk = QtWidgets.QPushButton(self.centralwidget)
-        self.btnOk.setGeometry(QtCore.QRect(200, 480, 93, 28))
-        self.btnOk.setObjectName("btnOk") """
         self.btnAtras = QtWidgets.QPushButton(self.centralwidget)
         self.btnAtras.setGeometry(QtCore.QRect(460, 480, 93, 28))
         self.btnAtras.setObjectName("btnAtras")
@@ -90,12 +81,15 @@ class modificarCliente(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self.btnBuscar.clicked.connect(self.buscarClienteBD)
-        self.btnEliminar.clicked.connect(self.eliminarCliente)
+        #self.btnBuscar.clicked.connect(self.buscarClienteBD)
+        #self.btnEliminar.clicked.connect(self.eliminarCliente)
         self.btnModificar.clicked.connect(self.modificarCliente)
         self.btnAtras.clicked.connect(lambda: self.ejecutarMasOpciones(MainWindow))
 
+        self.recibirDatos
+
         
+    # Función para conectar con la base de datos
     def establecerConexionBD(self):
         conexion = mysql.connector.connect(
             host='localhost',
@@ -106,7 +100,8 @@ class modificarCliente(object):
         
         return conexion
     
-
+    
+    # Captura los datos introducidos por el usuario en los distintos campos de texto de la interfaz
     def capturarDatos(self):
         self.nif = self.lineEditNif.text()
         self.nombre = self.lineEditNombre.text()
@@ -122,6 +117,7 @@ class modificarCliente(object):
         self.telefonoInt = int(self.telefono)
 
 
+    # Deja en blanco todos los campos de texto de la interfaz
     def limpiarCampos(self):
         self.lineEditNif.clear()
         self.lineEditNombre.clear()
@@ -143,8 +139,10 @@ class modificarCliente(object):
         self.lineEditTelefono.setEnabled(True)
 
 
+    # Recibe los datos enviados desde la ventana MasOpciones
     @pyqtSlot(str, str, str, str, str, str, str, str)
     def recibirDatos(self, nif, nombre, primerApellido, segundoApellido, calle, numero, municipio, telefono):
+        print("HEY JUDE")
         self.lineEditNif.setText(nif)
         self.lineEditNombre.setText(nombre)
         self.lineEditPrimerApellido.setText(primerApellido)
@@ -178,6 +176,7 @@ class modificarCliente(object):
             QMessageBox.critical(self, "Error", f"Error al consultar la base de datos: {str(e)}")
 
 
+    # Muestra la ventana MasOpciones
     def mostrarMasOpciones(self):
         from ventanaMasOpciones import masOpciones
         self.ventanaMasOpciones = QtWidgets.QMainWindow()
@@ -185,10 +184,12 @@ class modificarCliente(object):
         self.masOpciones.setupUi(self.ventanaMasOpciones)
         self.ventanaMasOpciones.show()
 
+    # Muestra la ventana MasOpciones y cierra la anterior
     def ejecutarMasOpciones(self):
         self.mostrarMasOpciones()
         MainWindow.close()
 
+    # Función que lanza un panel para informar u orientar al usuario en lo necesario
     def lanzarPanelInformativo(self, mensaje):
         msgBox = QtWidgets.QMessageBox(self.centralwidget)
         msgBox.setText(mensaje)
@@ -197,7 +198,7 @@ class modificarCliente(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Más Opciones"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Modificar cliente"))
         self.labelNif.setText(_translate("MainWindow", "NIF"))
         self.labelNombre.setText(_translate("MainWindow", "Nombre"))
         self.labelPrimerApellido.setText(_translate("MainWindow", "Primer apellido"))
@@ -207,9 +208,9 @@ class modificarCliente(object):
         self.labelMunicipio.setText(_translate("MainWindow", "Municipio"))
         self.labelTelefono.setText(_translate("MainWindow", "Teléfono"))
         #self.btnNuevo.setText(_translate("MainWindow", "Registrar Cliente"))
-        self.btnBuscar.setText(_translate("MainWindow", "Buscar Cliente"))
+        #self.btnBuscar.setText(_translate("MainWindow", "Buscar Cliente"))
         self.btnModificar.setText(_translate("MainWindow", "Modificar Cliente"))
-        self.btnEliminar.setText(_translate("MainWindow", "Eliminar Cliente"))
+        #self.btnEliminar.setText(_translate("MainWindow", "Eliminar Cliente"))
         #self.btnMasOpciones.setText(_translate("MainWindow", "Más Opciones"))
         self.btnAtras.setText(_translate("MainWindow", "Atrás"))
 

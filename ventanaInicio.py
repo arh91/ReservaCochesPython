@@ -57,7 +57,7 @@ class Inicio(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 
-    #Función para mostrar la ventana para crear nuevas reservas
+    # Función para mostrar la ventana para crear nuevas reservas
     def mostrarNuevaReserva(self, MainWindow):
         MainWindow.close()
         self.ventanaNuevaReserva = QtWidgets.QMainWindow()
@@ -66,7 +66,7 @@ class Inicio(object):
         self.ventanaNuevaReserva.show()
 
 
-    #Función para mostrar la ventana que lista las reservas en curso por mes
+    # Función para mostrar la ventana que lista las reservas en curso por mes
     def mostrarListadoReservas(self, MainWindow):
         MainWindow.close()
         self.ventanaListadoReservas = QtWidgets.QMainWindow()
@@ -75,7 +75,7 @@ class Inicio(object):
         self.ventanaListadoReservas.show()
 
 
-    #Muestra la ventana que lista los clientes por localidad de residencia
+    # Muestra la ventana que lista los clientes por localidad de residencia
     def mostrarListadoClientes(self, MainWindow):
         MainWindow.close()
         self.ventanaListadoClientes = QtWidgets.QMainWindow()
@@ -84,7 +84,7 @@ class Inicio(object):
         self.ventanaListadoClientes.show()
 
 
-    #Muestra la ventana para el registro de nuevos clientes
+    # Muestra la ventana para el registro de nuevos clientes
     def mostrarClientes(self, MainWindow):
         MainWindow.close()
         self.ventanaClientes = QtWidgets.QMainWindow()
@@ -93,7 +93,7 @@ class Inicio(object):
         self.ventanaClientes.show()
 
 
-    #Finaliza la aplicación
+    # Finaliza la aplicación
     def salir(self):
         exit()
 

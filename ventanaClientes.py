@@ -102,6 +102,7 @@ class Clientes(object):
         self.btnAtras.clicked.connect(lambda: self.ejecutarInicio(MainWindow))
 
 
+    # Función que conecta con la base de datos
     def establecerConexionBD(self):
         conexion = mysql.connector.connect(
             host='localhost',
@@ -118,14 +119,20 @@ class Clientes(object):
         self.insertarClienteBD()
         self.limpiarCampos()
 
+
+    # Muestra la ventana de inicio y cierra la anterior
     def ejecutarInicio(self, MainWindow):
         self.mostrarInicio()
         MainWindow.close()
 
+
+    # Muestra la ventana MasOpciones y cierra la anterior
     def ejecutarMasOpciones(self, MainWindow):
         self.mostrarMasOpciones()
         MainWindow.close()
 
+
+    # Muestra la ventana de inicio
     def mostrarInicio(self):
         from ventanaInicio import Inicio
         self.ventanaInicio = QtWidgets.QMainWindow()
@@ -133,6 +140,8 @@ class Clientes(object):
         self.inicio.setupUi(self.ventanaInicio)
         self.ventanaInicio.show()
 
+
+    #Muestra la ventana MasOpciones
     def mostrarMasOpciones(self):
         from ventanaMasOpciones import masOpciones
         self.ventanaMasOpciones = QtWidgets.QMainWindow()
@@ -140,6 +149,8 @@ class Clientes(object):
         self.masOpciones.setupUi(self.ventanaMasOpciones)
         self.ventanaMasOpciones.show()
         
+
+    # Captura los datos introducidos por el usuario en los distintos campos de texto de la interfaz
     def capturarDatos(self):
         self.nif = self.lineEditNif.text()
         self.nombre = self.lineEditNombre.text()
@@ -154,6 +165,8 @@ class Clientes(object):
         self.direccion = self.calle+(",")+self.numero+(",")+self.municipio
         self.telefonoInt = int(self.telefono)
 
+
+    # Deja en blanco todos los campos de texto de la interfaz
     def limpiarCampos(self):
         self.lineEditNif.clear()
         self.lineEditNombre.clear()
@@ -165,6 +178,7 @@ class Clientes(object):
         self.lineEditTelefono.clear()
 
 
+    # Almacena en variables los datos introducidos por el usuario y los utiliza para registrar un nuevo cliente en la base de datos
     def insertarClienteBD(self):
         nif = self.lineEditNif.text()
         nombre = self.lineEditNombre.text()
@@ -190,51 +204,12 @@ class Clientes(object):
         conexion.close()
 
 
+    # Función que lanza un panel para informar u orientar al usuario en lo necesario
     def lanzarPanelInformativo(self, mensaje):
         msgBox = QtWidgets.QMessageBox(self.centralwidget)
         msgBox.setText(mensaje)
         msgBox.exec()
 
-    """ def buscarClienteBD(self, id):
-        conexion = self.establecerConexionBD()
-        cur = conexion.cursor()
-        sql="select * from clientes where clNif = %s"
-        nif= self.lineEditNif.text()
-        cur.execute(sql, nif)
-        result = cur.fetchall()
-        for x in result:
-            nombre = x[1]
-            direccion = x[2]
-            telefono = x[3]
-
-        separador = ','
-        nombreCompleto = nombre.split(separador)
-        direccionCompleta = direccion.split(separador)
-
-        self.lineEditNombre.setText(nombreCompleto[0])
-        self.lineEditPrimerApellido.setText(nombreCompleto[1])
-        self.lineEditSegundoApellido.setText(nombreCompleto[2])
-        self.lineEditCalle.setText(direccionCompleta[0])
-        self.lineEditNumero.setText(direccionCompleta[1])
-        self.lineEditMunicipio.setText(direccionCompleta[2])
-        self.lineEditTelefono.setText(telefono)
-
-        self.lineEditNombre.setEnabled(False)
-        self.lineEditPrimerApellido.setEnabled(False)
-        self.lineEditSegundoApellido.setEnabled(False)
-        self.lineEditCalle.setEnabled(False)
-        self.lineEditNumero.setEnabled(False)
-        self.lineEditMunicipio.setEnabled(False)
-        self.lineEditTelefono.setEnabled(False)
-
-    def modificarCliente(self, id):
-        self.lineEditNombre.setEnabled(True)
-        self.lineEditPrimerApellido.setEnabled(True)
-        self.lineEditSegundoApellido.setEnabled(True)
-        self.lineEditCalle.setEnabled(True)
-        self.lineEditNumero.setEnabled(True)
-        self.lineEditMunicipio.setEnabled(True)
-        self.lineEditTelefono.setEnabled(True) """
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate

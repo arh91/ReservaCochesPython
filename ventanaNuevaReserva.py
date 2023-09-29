@@ -80,7 +80,7 @@ class NuevaReserva(object):
         self.llenarComboCoches(self.comboBox_Coches)
 
 
-    #Función para conectar con la base de datos
+    # Función para conectar con la base de datos
     def establecerConexionBD(self):
         conexion = mysql.connector.connect(
             host='localhost',
@@ -92,7 +92,7 @@ class NuevaReserva(object):
         return conexion
 
 
-    #Muestra la ventana de inicio de la app y cierra la anterior
+    # Muestra la ventana de inicio de la app y cierra la anterior
     def ejecutarFunciones(self, MainWindow):
         self.mostrarInicio()
         MainWindow.close()
@@ -109,7 +109,7 @@ class NuevaReserva(object):
         conexion.close()
 
 
-    #Muestra la ventana de inicio de nuestra aplicación
+    # Muestra la ventana de inicio de nuestra aplicación
     def mostrarInicio(self):
         from ventanaInicio import Inicio
         self.ventanaInicio = QtWidgets.QMainWindow()
@@ -118,9 +118,9 @@ class NuevaReserva(object):
         self.ventanaInicio.show()
 
 
-    #Recoge los datos introducidos por el usuario en los campos de texto y los almacena en variables
-    #También extrae datos del cliente y del vehículo en los items seleccionados por el usuario en los comboBox
-    #Valida que todos los campos hayan sido rellenados y que los datos introducidos sean correctos
+    # Recoge los datos introducidos por el usuario en los campos de texto y los almacena en variables
+    # También extrae datos del cliente y del vehículo en los items seleccionados por el usuario en los comboBox
+    # Valida que todos los campos hayan sido rellenados y que los datos introducidos sean correctos
     def capturarDatos(self):
         self.fechaInicial = self.textFecInicial.text()
         self.fechaFinal = self.textFecFinal.text()
@@ -195,7 +195,7 @@ class NuevaReserva(object):
             self.lanzarPanelInformativo("Por favor, rellene todos los campos")
 
 
-    #Función que recibe los datos de registro necesarios y los guarda como un nuevo registro en la base de datos
+    # Función que recibe los datos de registro necesarios y los guarda como un nuevo registro en la base de datos
     def insertarRegistroBD(self, codigoReservaInt, fechaInicialSql, fechaFinalSql, litrosInt, dniCliente, matriculaCoche):
         if(self.datosRellenados==True):
             conexion = self.establecerConexionBD()
@@ -216,7 +216,7 @@ class NuevaReserva(object):
             return
 
 
-    #Función que accede a la base de datos y vuelca todos los clientes de la misma en un comboBox
+    # Función que accede a la base de datos y vuelca todos los clientes de la misma en un comboBox
     def llenarComboClientes(self, combo):
         conexion = self.establecerConexionBD()
         cur = conexion.cursor()
@@ -232,7 +232,7 @@ class NuevaReserva(object):
         conexion.close()
 
 
-    #Función que accede a la base de datos y vuelca todos los vehículos registrados en un comboBox
+    # Función que accede a la base de datos y vuelca todos los vehículos registrados en un comboBox
     def llenarComboCoches(self, combo):
         conexion = self.establecerConexionBD()
         cur = conexion.cursor()
@@ -248,7 +248,7 @@ class NuevaReserva(object):
         conexion.close()
 
 
-    #Deja vacíos todos los campos de texto de nuestra ventana
+    # Deja vacíos todos los campos de texto de nuestra ventana
     def limpiarCampos(self):
         self.textCodReserva.setText("")
         self.textFecInicial.setText("")
@@ -256,7 +256,7 @@ class NuevaReserva(object):
         self.textLitros.setText("")
 
 
-    #Función que lanza un panel para informar u orientar al usuario en lo necesario
+    # Función que lanza un panel para informar u orientar al usuario en lo necesario
     def lanzarPanelInformativo(self, mensaje):
         msgBox = QtWidgets.QMessageBox(self.centralwidget)
         msgBox.setText(mensaje)

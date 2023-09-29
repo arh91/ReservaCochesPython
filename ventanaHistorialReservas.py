@@ -109,6 +109,7 @@ class HistorialReservas(object):
         MainWindow.close()
 
 
+    # Función que rellena el comboBox meses con los meses que correspondan en función del año seleccionado por el usuario
     def mostrarMeses(self, index):
         if index==0:
             self.rellenarComboMesesAnteriores(self.comboBoxMesesAnho)
@@ -118,6 +119,7 @@ class HistorialReservas(object):
             self.rellenarComboMeses(self.comboBoxMesesAnho)
 
 
+    # Función para conectar con la base de datos
     def establecerConexionBD(self):
         conexion = mysql.connector.connect(
             host='localhost',
@@ -129,6 +131,8 @@ class HistorialReservas(object):
         return conexion
     
 
+    # Función que construye una tabla para listar las reservas del historial por mes y año, accede a la base de datos, 
+    # obtiene los datos correspondientes y carga dichos datos en la tabla
     def Cargar_Datos_Tabla(self, index, comboAnhos):    
         modelo = QStandardItemModel(MainWindow)
         self.tableView.setModel(modelo)
@@ -181,6 +185,7 @@ class HistorialReservas(object):
         conexion.close()
         
 
+    # Función que muestra la ventana para el listado de reservas en curso
     def mostrarListadoReservas(self):
         from ventanaListadoReservas import ListadoReservas
         self.ventanaListadoReservas = QtWidgets.QMainWindow()
@@ -196,6 +201,7 @@ class HistorialReservas(object):
         self.textPrecioMedio.setText("200")
 
 
+    # Deja en blanco los campos de la interfaz
     def borrarDatos(self):
         self.textNumAlquileres.clear()
         self.textTotalMes.clear()
@@ -209,6 +215,7 @@ class HistorialReservas(object):
             combo.addItem(m)
 
 
+    # Rellena el combo Meses con el mes actual más los meses anteriores
     def rellenarComboMesesAnteriores(self, combo):
         combo.clear()
         mesActual = fecha[1]
@@ -231,6 +238,7 @@ class HistorialReservas(object):
             
 
 
+    # Rellena el combo Meses con los meses posteriores al mes actual
     def rellenarComboMesesSiquientes(self, combo):
         combo.clear()
         mesActual = fecha[1]
@@ -250,6 +258,7 @@ class HistorialReservas(object):
             indiceMes+=1 
 
 
+    # Rellena el combo Anhos con el año actual más los cinco años anteriores al mismo
     def rellenarComboAnhos(self, combo):
         combo.clear()
 
