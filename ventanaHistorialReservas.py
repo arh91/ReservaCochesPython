@@ -33,6 +33,7 @@ class HistorialReservas(object):
 
     selected_index = 0
     
+    # Construye la ventana con todos sus elementos
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Historial Reservas")
         MainWindow.resize(884, 450)
@@ -269,6 +270,7 @@ class HistorialReservas(object):
             anhoActual-=1
 
 
+    # Configuramos el título de nuestra ventana y el texto para los botones y para los label
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Historial Reservas"))
@@ -280,6 +282,7 @@ class HistorialReservas(object):
         self.labelTotalMes.setText(_translate("MainWindow", "Total Mes"))
 
 
+# Arranca la clase, construye la ventana y la muestra
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

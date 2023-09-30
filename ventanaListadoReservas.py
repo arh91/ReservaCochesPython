@@ -25,6 +25,7 @@ class ListadoReservas(object):
     selected_index = 0
     #global mesesAnho = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
 
+    # Construye la ventana con todos sus elementos
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Reservas en curso")
         MainWindow.resize(884, 450)
@@ -261,6 +262,7 @@ class ListadoReservas(object):
         self.textPrecioMedio.clear()
 
 
+    # Configuramos el título de nuestra ventana y el texto para los botones y para los label
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Reservas en curso"))
@@ -273,6 +275,7 @@ class ListadoReservas(object):
         self.labelTotalMes.setText(_translate("MainWindow", "Total Mes"))
 
 
+# Arranca la clase, construye la ventana y la muestra
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

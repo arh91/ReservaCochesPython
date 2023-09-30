@@ -13,6 +13,8 @@ import mysql.connector
 
 
 class Clientes(object):
+
+    # Construye la ventana con todos sus elementos
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -211,6 +213,7 @@ class Clientes(object):
         msgBox.exec()
 
 
+    # Configuramos el título de nuestra ventana y el texto para los botones y para los label
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Registro Cliente"))
@@ -223,13 +226,11 @@ class Clientes(object):
         self.labelMunicipio.setText(_translate("MainWindow", "Municipio"))
         self.labelTelefono.setText(_translate("MainWindow", "Teléfono"))
         self.btnNuevo.setText(_translate("MainWindow", "Registrar Cliente"))
-        """ self.btnBuscar.setText(_translate("MainWindow", "Buscar Cliente"))
-        self.btnModificar.setText(_translate("MainWindow", "Modificar Cliente"))
-        self.btnEliminar.setText(_translate("MainWindow", "Eliminar Cliente")) """
         self.btnMasOpciones.setText(_translate("MainWindow", "Más Opciones"))
         self.btnAtras.setText(_translate("MainWindow", "Atrás"))
 
 
+# Arranca la clase, construye la ventana y la muestra
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

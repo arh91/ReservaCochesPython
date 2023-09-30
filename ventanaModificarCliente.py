@@ -10,6 +10,7 @@ class modificarCliente(QMainWindow):
 
     existeDni = "false"
 
+    # Construye la ventana con todos sus elementos
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -196,6 +197,7 @@ class modificarCliente(QMainWindow):
         msgBox.exec()
 
 
+    # Configuramos el título de nuestra ventana y el texto para los botones y para los label
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Modificar cliente"))
@@ -215,6 +217,7 @@ class modificarCliente(QMainWindow):
         self.btnAtras.setText(_translate("MainWindow", "Atrás"))
 
 
+# Arranca la clase, construye la ventana y la muestra
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

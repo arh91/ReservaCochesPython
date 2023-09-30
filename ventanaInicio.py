@@ -16,6 +16,7 @@ from ventanaClientes import Clientes
 
 class Inicio(object):
 
+    # Construye la ventana con todos sus elementos
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Principal")
         MainWindow.resize(450, 300)
@@ -98,6 +99,7 @@ class Inicio(object):
         exit()
 
 
+    # Configuramos el título de nuestra ventana y el texto para los botones
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Principal"))        
@@ -108,6 +110,7 @@ class Inicio(object):
         self.btnSalir.setText(_translate("MainWindow", "Salir"))
 
 
+# Arranca la clase, construye la ventana y la muestra
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

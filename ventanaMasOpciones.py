@@ -12,6 +12,7 @@ class masOpciones(QMainWindow):
     camposRellenados = False
     data_signal = pyqtSignal(str, str, str, str, str, str, str, str)
 
+    # Construye la ventana con todos sus elementos
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -338,6 +339,7 @@ class masOpciones(QMainWindow):
         msgBox.setText(mensaje)
         msgBox.exec()
 
+
     # Envía los datos de la busqueda a la interfaz de modificarCliente
     def enviarDatos(self):
         nif = self.lineEditNif.text()
@@ -367,6 +369,7 @@ class masOpciones(QMainWindow):
         self.activarCampos()
 
 
+    # Configuramos el título de nuestra ventana y el texto para los botones y para los label
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Más Opciones"))
@@ -387,6 +390,7 @@ class masOpciones(QMainWindow):
         self.btnLimpiar.setText(_translate("MainWindow", "Limpiar Campos"))
 
 
+# Arranca la clase, construye la ventana y la muestra
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

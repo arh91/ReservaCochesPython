@@ -16,6 +16,7 @@ class NuevaReserva(object):
     datosRellenados = False
     fecha_Actual = datetime.now().date()
 
+    # Construye la ventana con todos sus elementos
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Nueva Reserva")
         MainWindow.resize(869, 455)
@@ -263,6 +264,7 @@ class NuevaReserva(object):
         msgBox.exec()
 
 
+    # Configuramos el título de nuestra ventana y el texto para los botones y para los label
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Nueva Reserva"))
@@ -276,6 +278,7 @@ class NuevaReserva(object):
         self.okButton.clicked.connect(self.capturarDatos)
 
 
+# Arranca la clase, construye la ventana y la muestra
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
