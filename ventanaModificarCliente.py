@@ -1,7 +1,7 @@
 import mysql
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
-from ventanaMasOpciones import masOpciones
+#from ventanaMasOpciones import masOpciones
 from PyQt5.QtCore import pyqtSlot
 import mysql.connector
 
@@ -9,6 +9,7 @@ import mysql.connector
 class modificarCliente(QMainWindow):
 
     existeDni = "false"
+    dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8 = "1", "2", "3", "4", "5", "6", "7", "8"
 
     # Construye la ventana con todos sus elementos
     def setupUi(self, MainWindow):
@@ -87,7 +88,7 @@ class modificarCliente(QMainWindow):
         self.btnModificar.clicked.connect(self.modificarCliente)
         self.btnAtras.clicked.connect(lambda: self.ejecutarMasOpciones(MainWindow))
 
-        self.recibirDatos
+        self.rellenarCampos()
 
         
     # Función para conectar con la base de datos
@@ -144,14 +145,24 @@ class modificarCliente(QMainWindow):
     @pyqtSlot(str, str, str, str, str, str, str, str)
     def recibirDatos(self, nif, nombre, primerApellido, segundoApellido, calle, numero, municipio, telefono):
         print("HEY JUDE")
-        self.lineEditNif.setText(nif)
+        global dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8
+
+        dato1 = nif
+        dato2 = nombre
+        dato3 = primerApellido
+        dato4 = segundoApellido
+        dato5 = calle
+        dato6 = numero
+        dato7 = municipio
+        dato8 = telefono
+        """ self.lineEditNif.setText(nif)
         self.lineEditNombre.setText(nombre)
         self.lineEditPrimerApellido.setText(primerApellido)
         self.lineEditSegundoApellido.setText(segundoApellido)
         self.lineEditCalle.setText(calle)
         self.lineEditNumero.setText(numero)
         self.lineEditMunicipio.setText(municipio)
-        self.lineEditTelefono.setText(telefono)
+        self.lineEditTelefono.setText(telefono) """
 
 
     def verificarEnMySQL(self):
@@ -177,6 +188,18 @@ class modificarCliente(QMainWindow):
             QMessageBox.critical(self, "Error", f"Error al consultar la base de datos: {str(e)}")
 
 
+    def rellenarCampos(self):
+        global dato1, dato2, dato3
+        self.lineEditNif.setText(dato1)
+        self.lineEditNombre.setText(dato2)
+        self.lineEditPrimerApellido.setText(dato3)
+        self.lineEditSegundoApellido.setText(dato4)
+        self.lineEditCalle.setText(dato5)
+        self.lineEditNumero.setText(dato6)
+        self.lineEditMunicipio.setText(dato7)
+        self.lineEditTelefono.setText(dato8)
+
+
     # Muestra la ventana MasOpciones
     def mostrarMasOpciones(self):
         from ventanaMasOpciones import masOpciones
@@ -186,7 +209,7 @@ class modificarCliente(QMainWindow):
         self.ventanaMasOpciones.show()
 
     # Muestra la ventana MasOpciones y cierra la anterior
-    def ejecutarMasOpciones(self):
+    def ejecutarMasOpciones(self, MainWindow):
         self.mostrarMasOpciones()
         MainWindow.close()
 

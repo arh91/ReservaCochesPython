@@ -2,6 +2,7 @@ import mysql
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 from PyQt5.QtCore import pyqtSignal
+from ventanaModificarCliente import modificarCliente
 import mysql.connector
 
 
@@ -9,7 +10,7 @@ class masOpciones(QMainWindow):
 
     existeDni = False
     botonBuscarClickado = False
-    camposRellenados = False
+    #camposRellenados = False
     data_signal = pyqtSignal(str, str, str, str, str, str, str, str)
 
     # Construye la ventana con todos sus elementos
@@ -102,6 +103,9 @@ class masOpciones(QMainWindow):
         self.btnAtras.clicked.connect(lambda: self.ejecutarClientes(MainWindow))
         self.btnLimpiar.clicked.connect(self.limpiarCampos)
 
+        self.ventana_modificar = modificarCliente()
+        self.data_signal.connect(self.ventana_modificar.recibirDatos)
+
         
     # Función para conectar con la base de datos
     def establecerConexionBD(self):
@@ -175,7 +179,7 @@ class masOpciones(QMainWindow):
         botonBuscarClickado=False
         nif = self.lineEditNif.text()
         if not nif.strip():
-            self.lanzarPanelInformativo("Error: no ha introducido el nif del cliente que desea eliminar.")
+            self.lanzarPanelInformativo("Error: no ha introducido el nif del cliente que desea buscar.")
             return
         self.verificarEnMySQL()
         if existeDni == False:
@@ -251,12 +255,13 @@ class masOpciones(QMainWindow):
 
     def ejecutarFuncionesModificar(self, MainWindow):
         global botonBuscarClickado
-        global camposRellenados
-        self.comprobarCamposRellenados()
-        if botonBuscarClickado==True and camposRellenados==True:
+        #global camposRellenados
+        #self.comprobarCamposRellenados()
+        if botonBuscarClickado==True:
             self.enviarDatos()
             self.mostrarVentanaModificar()
             MainWindow.close()
+            botonBuscarClickado = False
         else:
             self.lanzarPanelInformativo("Primero busque los datos del cliente que desea modificar, introduciendo su nif y haciendo click en botón Buscar")
             botonBuscarClickado = False
@@ -278,16 +283,6 @@ class masOpciones(QMainWindow):
         self.clientes = Clientes()
         self.clientes.setupUi(self.ventanaClientes)
         self.ventanaClientes.show()
-
-
-    """ def masOpciones(self):
-        self.lineEditNombre.setEnabled(True)
-        self.lineEditPrimerApellido.setEnabled(True)
-        self.lineEditSegundoApellido.setEnabled(True)
-        self.lineEditCalle.setEnabled(True)
-        self.lineEditNumero.setEnabled(True)
-        self.lineEditMunicipio.setEnabled(True)
-        self.lineEditTelefono.setEnabled(True) """
 
 
     # Función que lee el dni introducido por el usuario, luego accede a la base de datos y comprueba que dicho dni exista en la misma
@@ -315,7 +310,7 @@ class masOpciones(QMainWindow):
 
 
     # Comprueba que todos los campos de texto estén rellenados
-    def comprobarCamposRellenados(self):
+    """ def comprobarCamposRellenados(self):
         global camposRellenados
         # Comprobar si todos los QLineEdit están rellenados
         nif = self.lineEditNif.text()
@@ -330,7 +325,7 @@ class masOpciones(QMainWindow):
         if nif.strip() and nombre.strip() and primerApellido.strip() and segundoApellido.strip() and calle.strip() and numero.strip() and municipio.strip() and telefono.strip():
             camposRellenados = True
         else:
-            camposRellenados = False
+            camposRellenados = False """
 
 
     # Función que lanza un panel para informar u orientar al usuario en lo necesario
