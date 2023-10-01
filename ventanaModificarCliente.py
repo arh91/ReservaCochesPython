@@ -10,6 +10,16 @@ class modificarCliente(QMainWindow):
 
     existeDni = "false"
     dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8 = "1", "2", "3", "4", "5", "6", "7", "8"
+    nifIntro = "nif"
+    nombreIntro = "nombre"
+    primerApellidoIntro = "primerApellido"
+    segundoApellidoIntro = "segundoApellido"
+    calleIntro = "calle"
+    numeroIntro = "numero"
+    municipioIntro = "municipio"
+    telefonoIntro = "telefono"
+    nombreCompletoIntro = "nc"
+    direccionIntro = "d"
 
     # Construye la ventana con todos sus elementos
     def setupUi(self, MainWindow):
@@ -89,6 +99,7 @@ class modificarCliente(QMainWindow):
         self.btnAtras.clicked.connect(lambda: self.ejecutarMasOpciones(MainWindow))
 
         self.rellenarCampos()
+        self.desactivarNif()
 
         
     # Función para conectar con la base de datos
@@ -105,18 +116,19 @@ class modificarCliente(QMainWindow):
     
     # Captura los datos introducidos por el usuario en los distintos campos de texto de la interfaz
     def capturarDatos(self):
-        self.nif = self.lineEditNif.text()
-        self.nombre = self.lineEditNombre.text()
-        self.primerApellido = self.lineEditPrimerApellido.text()
-        self.segundoApellido = self.lineEditSegundoApellido.text()
-        self.calle = self.lineEditCalle.text()
-        self.numero = self.lineEditNumero.text()
-        self.municipio = self.lineEditMunicipio.text()
-        self.telefono = self.lineEditTelefono.text()
+        global nifIntro, nombreIntro, primerApellidoIntro, segundoApellidoIntro, calleIntro, numeroIntro, municipioIntro, telefonoIntro, nombreCompleto, direccion
 
-        self.nombreCompleto = self.nombre+(" ")+self.primerApellido+(" ")+self.segundoApellido
-        self.direccion = self.calle+(",")+self.numero+(",")+self.municipio
-        self.telefonoInt = int(self.telefono)
+        nifIntro = self.lineEditNif.text()
+        nombreIntro = self.lineEditNombre.text()
+        primerApellidoIntro = self.lineEditPrimerApellido.text()
+        segundoApellidoIntro = self.lineEditSegundoApellido.text()
+        calleIntro = self.lineEditCalle.text()
+        numeroIntro = self.lineEditNumero.text()
+        municipioIntro = self.lineEditMunicipio.text()
+        telefonoIntro = self.lineEditTelefono.text()
+
+        nombreCompleto = nombreIntro+(" ")+primerApellidoIntro+(" ")+segundoApellidoIntro
+        direccion = calleIntro+(",")+numeroIntro+(",")+municipioIntro
 
 
     # Deja en blanco todos los campos de texto de la interfaz
@@ -131,20 +143,29 @@ class modificarCliente(QMainWindow):
         self.lineEditTelefono.clear()
 
 
+    def desactivarNif(self):
+        self.lineEditNif.setEnabled(False)
+
+
     def modificarCliente(self):
-        self.lineEditNombre.setEnabled(True)
-        self.lineEditPrimerApellido.setEnabled(True)
-        self.lineEditSegundoApellido.setEnabled(True)
-        self.lineEditCalle.setEnabled(True)
-        self.lineEditNumero.setEnabled(True)
-        self.lineEditMunicipio.setEnabled(True)
-        self.lineEditTelefono.setEnabled(True)
+        global nombreCompleto, direccion, telefonoIntro, nifIntro
+        self.capturarDatos()
+        if nombreIntro==dato2 and primerApellidoIntro==dato3 and segundoApellidoIntro==dato4 and calleIntro==dato5 and numeroIntro==dato6 and municipioIntro==dato7 and telefonoIntro==dato8:
+            self.lanzarPanelInformativo("No ha modificado ningún dato")
+        else:
+            conexion = self.establecerConexionBD()
+            cur = conexion.cursor()
+            sql = "UPDATE clientes SET clNombre = %s, clDireccion = %s, clTelefono = %s WHERE clNif = %s"
+            cur.execute(sql, (nombreCompleto, direccion, telefonoIntro, nifIntro))
+            conexion.commit()
+            self.lanzarPanelInformativo("Se han actualizado los datos correctamente")
+            cur.close()
+            conexion.close()
 
 
     # Recibe los datos enviados desde la ventana MasOpciones
     @pyqtSlot(str, str, str, str, str, str, str, str)
     def recibirDatos(self, nif, nombre, primerApellido, segundoApellido, calle, numero, municipio, telefono):
-        print("HEY JUDE")
         global dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8
 
         dato1 = nif
