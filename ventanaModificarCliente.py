@@ -127,8 +127,8 @@ class modificarCliente(QMainWindow):
         municipioIntro = self.lineEditMunicipio.text()
         telefonoIntro = self.lineEditTelefono.text()
 
-        nombreCompleto = nombreIntro+(" ")+primerApellidoIntro+(" ")+segundoApellidoIntro
-        direccion = calleIntro+(",")+numeroIntro+(",")+municipioIntro
+        nombreCompleto = nombreIntro + " " + primerApellidoIntro + " " + segundoApellidoIntro
+        direccion = calleIntro + ", " + numeroIntro + ", " + municipioIntro
 
 
     # Deja en blanco todos los campos de texto de la interfaz
@@ -153,12 +153,33 @@ class modificarCliente(QMainWindow):
         if nombreIntro==dato2 and primerApellidoIntro==dato3 and segundoApellidoIntro==dato4 and calleIntro==dato5 and numeroIntro==dato6 and municipioIntro==dato7 and telefonoIntro==dato8:
             self.lanzarPanelInformativo("No ha modificado ningún dato")
         else:
+            box = QMessageBox()
+            box.setIcon(QMessageBox.Question)
+            box.setWindowTitle('Confirmar operación')
+            box.setText('¿Está seguro de que desea modificar éste cliente?')
+            box.setStandardButtons(QMessageBox.Yes|QMessageBox.No)
+            buttonY = box.button(QMessageBox.Yes)
+            buttonY.setText('Continuar')
+            buttonN = box.button(QMessageBox.No)
+            buttonN.setText('Cancelar')
+            box.exec_()
+
+            if box.clickedButton() == buttonY:
+                self.modificarDatos()
+
+
+    def modificarDatos(self):
+        try:
             conexion = self.establecerConexionBD()
             cur = conexion.cursor()
             sql = "UPDATE clientes SET clNombre = %s, clDireccion = %s, clTelefono = %s WHERE clNif = %s"
             cur.execute(sql, (nombreCompleto, direccion, telefonoIntro, nifIntro))
             conexion.commit()
             self.lanzarPanelInformativo("Se han actualizado los datos correctamente")
+        except:
+            self.lanzarPanelInformativo("Error al modiicar datos:")
+        finally:
+            # Cierra la conexión a la base de datos
             cur.close()
             conexion.close()
 
@@ -229,14 +250,17 @@ class modificarCliente(QMainWindow):
         self.masOpciones.setupUi(self.ventanaMasOpciones)
         self.ventanaMasOpciones.show()
 
+
     # Muestra la ventana MasOpciones y cierra la anterior
     def ejecutarMasOpciones(self, MainWindow):
         self.mostrarMasOpciones()
         MainWindow.close()
 
+
     # Función que lanza un panel para informar u orientar al usuario en lo necesario
     def lanzarPanelInformativo(self, mensaje):
         msgBox = QtWidgets.QMessageBox(self.centralwidget)
+        msgBox.setWindowTitle("Información")
         msgBox.setText(mensaje)
         msgBox.exec()
 

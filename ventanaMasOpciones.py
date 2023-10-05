@@ -232,18 +232,38 @@ class masOpciones(QMainWindow):
             self.lanzarPanelInformativo("Error: el nif introducido no existe en nuestra base de datos.")
             return
         else:
-            buttonReply = QMessageBox.question(self, 'Mensaje PyQt5', "¿Está seguro que desea eliminar éste cliente?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-            if buttonReply == QMessageBox.Yes:
-                conexion = self.establecerConexionBD()
-                cur = conexion.cursor()
-                sql="delete * from clientes where clNif = %s"
-                nif= self.lineEditNif.text()
-                cur.execute(sql, (nif,))
-                cur.close()
-                conexion.close()
-            else:
-                return
+            box = QMessageBox()
+            box.setIcon(QMessageBox.Question)
+            box.setWindowTitle('Confirmar operación')
+            box.setText('¿Está seguro de que desea eliminar éste cliente?')
+            box.setStandardButtons(QMessageBox.Yes|QMessageBox.No)
+            buttonY = box.button(QMessageBox.Yes)
+            buttonY.setText('Continuar')
+            buttonN = box.button(QMessageBox.No)
+            buttonN.setText('Cancelar')
+            box.exec_()
 
+            if box.clickedButton() == buttonY:
+                self.eliminar()
+
+
+    def eliminar(self):
+        try:
+            conexion = self.establecerConexionBD()
+            cur = conexion.cursor()
+            sql="delete from clientes where clNif = %s"
+            nif= self.lineEditNif.text()
+            print(nif)
+            cur.execute(sql, (nif,))
+            conexion.commit()
+            self.lanzarPanelInformativo("El cliente ha sido eliminado de la base de datos")
+        except:
+            self.lanzarPanelInformativo("Error al eliminar cliente:")
+        finally:
+            # Cierra la conexión a la base de datos
+            cur.close()
+            conexion.close()
+        
 
     # Muestra la ventana Clientes y cierra la anterior
     def ejecutarClientes(self, MainWindow):
@@ -331,6 +351,7 @@ class masOpciones(QMainWindow):
     # Función que lanza un panel para informar u orientar al usuario en lo necesario
     def lanzarPanelInformativo(self, mensaje):
         msgBox = QtWidgets.QMessageBox(self.centralwidget)
+        msgBox.setWindowTitle("Información")
         msgBox.setText(mensaje)
         msgBox.exec()
 

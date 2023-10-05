@@ -182,33 +182,38 @@ class Clientes(object):
 
     # Almacena en variables los datos introducidos por el usuario y los utiliza para registrar un nuevo cliente en la base de datos
     def insertarClienteBD(self):
-        nif = self.lineEditNif.text()
-        nombre = self.lineEditNombre.text()
-        primerApellido = self.lineEditPrimerApellido.text()
-        segundoApellido = self.lineEditSegundoApellido.text()
-        calle = self.lineEditCalle.text()
-        numero = self.lineEditNumero.text()
-        municipio = self.lineEditMunicipio.text()
-        telefono = self.lineEditTelefono.text()
+        try:
+            nif = self.lineEditNif.text()
+            nombre = self.lineEditNombre.text()
+            primerApellido = self.lineEditPrimerApellido.text()
+            segundoApellido = self.lineEditSegundoApellido.text()
+            calle = self.lineEditCalle.text()
+            numero = self.lineEditNumero.text()
+            municipio = self.lineEditMunicipio.text()
+            telefono = self.lineEditTelefono.text()
 
-        nombreCompleto = nombre + primerApellido + segundoApellido
-        direccion = calle + numero + municipio
+            nombreCompleto = nombre + " "+primerApellido+" "+segundoApellido
+            direccion = calle + ", " + numero + ", " + municipio
 
-        conexion = self.establecerConexionBD()
-        cur = conexion.cursor()
-        sql = "INSERT INTO clientes (clNif, clNombre, clDireccion, clTelefono) VALUES (%s, %s, %s, %s)"
-            # val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
-        cur.execute(sql, (nif, nombreCompleto, direccion, telefono))
-
-        conexion.commit()
-        self.lanzarPanelInformativo("Se han registrado los datos correctamente")
-
-        conexion.close()
+            conexion = self.establecerConexionBD()
+            cur = conexion.cursor()
+            sql = "INSERT INTO clientes (clNif, clNombre, clDireccion, clTelefono) VALUES (%s, %s, %s, %s)"
+                # val = (self.codigoReservaInt, self.fechaInicialDate, self.fechaFinalDate)
+            cur.execute(sql, (nif, nombreCompleto, direccion, telefono))
+            conexion.commit()
+            self.lanzarPanelInformativo("Se han registrado los datos correctamente")
+        except:
+            self.lanzarPanelInformativo("Error al insertar datos:")
+        finally:
+            # Cierra la conexión a la base de datos
+            cur.close()
+            conexion.close()
 
 
     # Función que lanza un panel para informar u orientar al usuario en lo necesario
     def lanzarPanelInformativo(self, mensaje):
         msgBox = QtWidgets.QMessageBox(self.centralwidget)
+        msgBox.setWindowTitle("Información")
         msgBox.setText(mensaje)
         msgBox.exec()
 

@@ -260,6 +260,7 @@ class NuevaReserva(object):
     # Función que lanza un panel para informar u orientar al usuario en lo necesario
     def lanzarPanelInformativo(self, mensaje):
         msgBox = QtWidgets.QMessageBox(self.centralwidget)
+        msgBox.setWindowTitle("Información")
         msgBox.setText(mensaje)
         msgBox.exec()
 
