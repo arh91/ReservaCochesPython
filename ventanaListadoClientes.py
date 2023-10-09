@@ -38,9 +38,9 @@ class ListadoClientes(object):
         self.comboBoxCiudades = QtWidgets.QComboBox(self.centralwidget)
         self.comboBoxCiudades.setGeometry(QtCore.QRect(70, 30, 161, 22))
         self.comboBoxCiudades.setObjectName("comboBoxCiudades")
-        self.btnMostrarDatos = QtWidgets.QPushButton(self.centralwidget)
+        """ self.btnMostrarDatos = QtWidgets.QPushButton(self.centralwidget)
         self.btnMostrarDatos.setGeometry(QtCore.QRect(320, 480, 161, 28))
-        self.btnMostrarDatos.setObjectName("btnMostrarDatos")
+        self.btnMostrarDatos.setObjectName("btnMostrarDatos") """
         self.btnAtras = QtWidgets.QPushButton(self.centralwidget)
         self.btnAtras.setGeometry(QtCore.QRect(631,480, 93, 28))
         self.btnAtras.setObjectName("btnAtras")
@@ -62,8 +62,8 @@ class ListadoClientes(object):
         global selected_index
         selected_index = self.comboBoxCiudades.currentIndex()
 
-        self.comboBoxCiudades.currentIndexChanged.connect(lambda index: self.load_data(index))
-        self.btnMostrarDatos.clicked.connect(self.cargarDatos)
+        self.comboBoxCiudades.currentIndexChanged.connect(self.cargarDatos)
+        #self.btnMostrarDatos.clicked.connect(self.cargarDatos)
         self.btnAtras.clicked.connect(lambda: self.ejecutarFunciones(MainWindow))
 
         self.obtenerDirecciones()
@@ -100,28 +100,28 @@ class ListadoClientes(object):
 
     def cargarDatos(self):
         item = self.comboBoxCiudades.currentText()
-        self.load_data(item)
+        self.cargarTabla(item)
 
 
-    def load_data(self, selected_item):
+    def cargarTabla(self, selected_item):
         try:
             modelo = QStandardItemModel(MainWindow)
-            self.tableView.setModel(modelo)
+            self.tablaClientes.setModel(modelo)
 
             # Establecer el delegate para centrar todos los datos en la tabla
             delegate = CenterDelegate()
-            self.tableView.setItemDelegate(delegate)
+            self.tablaClientes.setItemDelegate(delegate)
 
 
             nombreColumnas = ["NIF", "Nombre", "Dirección", "Teléfono"]  # Nombres de las columnas
             modelo.setHorizontalHeaderLabels(nombreColumnas)
 
-            anchoTabla = self.tableView.viewport().width()
+            anchoTabla = self.tablaClientes.viewport().width()
             numeroColumnas = 4
             anchoColumna = anchoTabla / numeroColumnas
 
             for col in range(numeroColumnas):
-                self.tableView.setColumnWidth(col, anchoColumna)
+                self.tablaClientes.setColumnWidth(col, anchoColumna) 
 
             conexion = self.establecerConexionBD()
             cur = conexion.cursor()
@@ -133,72 +133,58 @@ class ListadoClientes(object):
             for data_row in cur.fetchall():
                 for col, value in enumerate(data_row):
                     item = QStandardItem(str(value))
-                    self.tableView.model().setItem(row, col, item)
+                    self.tablaClientes.model().setItem(row, col, item)
                 row += 1
         except:
             print("Error al obtener los datos")
         finally:
             cur.close()
             conexion.close()
-        
-
-
-        """ query = QSqlQueryModel()
-        query.setQuery(f"SELECT * FROM clientes WHERE clDireccion LIKE %s")
-
-        if query.lastError().isValid():
-            print("Error en la consulta:", query.lastError().text())
-            return
-
-        self.tablaClientes.setModel(query) """
-
+            
 
     def obtenerDirecciones(self):
-        """ global direcciones
-        global localidades
-        global localidadesFinal
- """
         self.obtenerDireccionesClientes(ListadoClientes.direcciones)
         for d in ListadoClientes.direcciones:
             arrayLocalidades = d.split(",")
-            localidad = arrayLocalidades[arrayLocalidades.length-1]
+            localidad = arrayLocalidades[-1]
             ListadoClientes.localidades.append(localidad)
 
-        for l in ListadoClientes.localidades:
-            if l in ListadoClientes.localidadesFinal:
+        for tuple in ListadoClientes.localidades:
+            if tuple in ListadoClientes.localidadesFinal:
                 continue
             else:
-                ListadoClientes.localidadesFinal.append(l)
+                ListadoClientes.localidadesFinal.append(tuple)
 
 
 
     def obtenerDireccionesClientes(self, list):
         conexion = self.establecerConexionBD()
+        listaDirecciones = []
         try:
             cur = conexion.cursor()
             sql = "SELECT clDireccion FROM clientes"
             cur.execute(sql)
-            #conexion.commit()
-
-            for row in cur.fetchall():
-                print(row)
-                value = row[2]
-                list.append(value)
             
-            print(list)
-            conexion.commit()
+            for row in cur.fetchall():
+                listaDirecciones.append(row)
+
         except:
             print("Error: no se han podido obtener los datos")
         finally:
             # Cierra la conexión a la base de datos
             cur.close()
             conexion.close()
-
-
+            delim = ','
+            for tuple in listaDirecciones:
+                string = delim.join(tuple)
+                arrayDireccion = string.split(",")
+                list.append(arrayDireccion[2])
+ 
+    
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Listado Clientes"))
-        self.btnMostrarDatos.setText(_translate("MainWindow", "Mostrar Clientes"))
+        #self.btnMostrarDatos.setText(_translate("MainWindow", "Mostrar Clientes"))
         self.btnAtras.setText(_translate("MainWindow", "Atrás"))
         self.checkBox.setText(_translate("MainWindow", "Por orden alfabético"))
 

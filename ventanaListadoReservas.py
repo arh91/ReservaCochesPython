@@ -67,9 +67,9 @@ class ListadoReservas(object):
         self.labelTotalMes = QtWidgets.QLabel(self.centralwidget)
         self.labelTotalMes.setGeometry(QtCore.QRect(700, 0, 55, 16))
         self.labelTotalMes.setObjectName("labelTotalMes")
-        self.tableView = QtWidgets.QTableView(self.centralwidget)
-        self.tableView.setGeometry(QtCore.QRect(120, 90, 650, 221))
-        self.tableView.setObjectName("tableView")
+        self.tablaReservas = QtWidgets.QTableView(self.centralwidget)
+        self.tablaReservas.setGeometry(QtCore.QRect(120, 90, 650, 221))
+        self.tablaReservas.setObjectName("tablaReservas")
 
 
         MainWindow.setCentralWidget(self.centralwidget)
@@ -126,22 +126,22 @@ class ListadoReservas(object):
     #Construye la tabla con las columnas correspondientes y la rellena de datos obtenidos de la base de datos
     def Cargar_Datos_Tabla(self, index):    
         modelo = QStandardItemModel(MainWindow)
-        self.tableView.setModel(modelo)
+        self.tablaReservas.setModel(modelo)
 
         # Establecer el delegate para centrar todos los datos en la tabla
         delegate = CenterDelegate()
-        self.tableView.setItemDelegate(delegate)
+        self.tablaReservas.setItemDelegate(delegate)
 
 
         nombreColumnas = ["Cliente", "Vehículo", "Precio", "Días", "Total"]  # Nombres de las columnas
         modelo.setHorizontalHeaderLabels(nombreColumnas)
 
-        anchoTabla = self.tableView.viewport().width()
+        anchoTabla = self.tablaReservas.viewport().width()
         numeroColumnas = 5
         anchoColumna = anchoTabla / numeroColumnas
 
         for col in range(numeroColumnas):
-            self.tableView.setColumnWidth(col, anchoColumna)  
+            self.tablaReservas.setColumnWidth(col, anchoColumna)  
 
         index+=1
 
@@ -169,7 +169,7 @@ class ListadoReservas(object):
         for data_row in cur.fetchall():
             for col, value in enumerate(data_row):
                 item = QStandardItem(str(value))
-                self.tableView.model().setItem(row, col, item)
+                self.tablaReservas.model().setItem(row, col, item)
             row += 1
 
         cur.close()
