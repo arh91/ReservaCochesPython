@@ -28,7 +28,7 @@ class ListadoClientes(object):
     direcciones = []
     localidades = []
     localidadesFinal = []
-
+    checkBox_marcado = False
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -61,6 +61,8 @@ class ListadoClientes(object):
 
         global selected_index
         selected_index = self.comboBoxCiudades.currentIndex()
+
+        self.checkBox.stateChanged.connect(self.mostrar_estado_checkbox)
 
         self.comboBoxCiudades.currentIndexChanged.connect(self.cargarDatos)
         #self.btnMostrarDatos.clicked.connect(self.cargarDatos)
@@ -100,7 +102,18 @@ class ListadoClientes(object):
 
     def cargarDatos(self):
         item = self.comboBoxCiudades.currentText()
-        self.cargarTabla(item)
+        if ListadoClientes.checkBox_marcado == True:
+            self.cargarTablaOrdenAlfabético(item)
+        else:
+            self.cargarTabla(item)
+
+
+    def mostrar_estado_checkbox(self, state):
+        if state == 2:  # El valor 2 indica que el QCheckBox está marcado
+            ListadoClientes.checkBox_marcado = True
+        else:
+            ListadoClientes.checkBox_marcado = False
+            
 
 
     def cargarTabla(self, selected_item):
@@ -140,7 +153,46 @@ class ListadoClientes(object):
         finally:
             cur.close()
             conexion.close()
-            
+
+    
+    def cargarTablaOrdenAlfabético(self, selected_item):
+        try:
+            modelo = QStandardItemModel(MainWindow)
+            self.tablaClientes.setModel(modelo)
+
+            # Establecer el delegate para centrar todos los datos en la tabla
+            delegate = CenterDelegate()
+            self.tablaClientes.setItemDelegate(delegate)
+
+
+            nombreColumnas = ["NIF", "Nombre", "Dirección", "Teléfono"]  # Nombres de las columnas
+            modelo.setHorizontalHeaderLabels(nombreColumnas)
+
+            anchoTabla = self.tablaClientes.viewport().width()
+            numeroColumnas = 4
+            anchoColumna = anchoTabla / numeroColumnas
+
+            for col in range(numeroColumnas):
+                self.tablaClientes.setColumnWidth(col, anchoColumna) 
+
+            conexion = self.establecerConexionBD()
+            cur = conexion.cursor()
+            sql = "SELECT * FROM clientes WHERE clDireccion LIKE %s ORDER BY clNombre"
+            ciudad = f"%{selected_item}%"
+            cur.execute(sql, (ciudad,))
+
+            row = 0
+            for data_row in cur.fetchall():
+                for col, value in enumerate(data_row):
+                    item = QStandardItem(str(value))
+                    self.tablaClientes.model().setItem(row, col, item)
+                row += 1
+        except:
+            print("Error al obtener los datos")
+        finally:
+            cur.close()
+            conexion.close()
+
 
     def obtenerDirecciones(self):
         self.obtenerDireccionesClientes(ListadoClientes.direcciones)
